@@ -1,0 +1,21 @@
+name = "bcdastro"
+compatibility_date = "2025-06-15"
+compatibility_flags = ["nodejs_compat"]
+main = "./dist/_worker.js/index.js"
+assets = { directory = "./dist", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bcdastro-db"
+database_id = "de860f84-811d-4f7a-8ed9-f1c04bb43552"
+
+[[kv_namespaces]]
+binding = "KV_NAMESPACE"
+id = "0b2f870976b14e558f6467ca0cb440b0"
+
+[vars]
+STRIPE_SECRET_KEY = "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"
+JWT_SECRET = "$2a$10$2lt0QhMD2mPRhFEAjl5k0u3jiSffbJ/.aCa6YFbbMhBdn830jSUHO"
+COINBASE_API_KEY = "<your-coinbase-api-key>"
+CDP_API_KEY_ID = "ce25cf74-ab43-4cd0-8303-f9b066498e9c"
+CDP_API_KEY_SECRET = "M0Gz0DzvSzukh3QPIhDH5Ux6uOr86+IWgOWoV+unX5CkP0wGJWEIbOEKepECcgBM6RusGqC/lPWbcNGuGaEjyw=="

@@ -1,16 +1,96 @@
 ---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+import MediaCard from '../components/MediaCard.tsx';
+import { getSession } from '../lib/auth';
+import '../styles/global.css';
 
+const session = await getSession(Astro.request);
+const mediaItems = await Astro.locals.DB
+  ?.prepare(`SELECT id, title, preview_url, accepts_stripe, accepts_crypto FROM media WHERE slug IS NOT NULL LIMIT 6`)
+  .all() || { results: [] };
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <SEO
+    title="Battle Creek Drone | Aerial Innovation"
+    description="FAA-certified drone services for inspections, mapping, and cinematic footage. Powered by modern tech and crypto-enabled delivery."
+  />
+  <body class="bg-gradient-to-br from-gray-950 to-black text-white font-sans min-h-screen overflow-x-hidden">
+    <Header />
+
+    <main class="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
+      <!-- Hero -->
+      <section class="relative h-[80vh] flex items-center justify-center text-center overflow-hidden rounded-xl shadow-xl">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 blur-sm" src="/previews/hero-video.mp4"></video>
+        <div class="absolute inset-0 bg-gradient-to-br from-black/80 to-transparent" />
+        <div class="relative z-10 space-y-6 animate-fade-in px-6">
+          <h1 class="text-5xl md:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600">
+            Battle Creek Drone
+          </h1>
+          <p class="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto">
+            Precision aerial visuals, inspections & mapping. FAA-certified and crypto-native.
+          </p>
+          <a href="#portfolio" class="btn-primary inline-block px-8 py-4 bg-cyan-600 hover-glow rounded-full text-lg">
+            Explore Our Work
+          </a>
+        </div>
+      </section>
+
+      <!-- Services -->
+      <section id="services" class="text-center">
+        <h2 class="text-4xl font-bold section-title mb-4">What We Deliver</h2>
+        <p class="text-gray-400 max-w-xl mx-auto mb-10">
+          Our drones are deployed by certified pilots for commercial, creative, and industrial projects—bringing clarity from above.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { title: 'Mapping & Survey', desc: 'Accurate, repeatable, high-res mapping.' },
+            { title: 'Inspection', desc: 'Capture detail from places humans shouldn’t go.' },
+            { title: 'Creative & Media', desc: 'Cinematic visuals for web, broadcast, and social.' }
+          ].map(item => (
+            <div class="bg-gray-800 p-6 rounded-xl shadow-md card-hover">
+              <h3 class="text-xl text-cyan-400 font-semibold mb-2">{item.title}</h3>
+              <p class="text-gray-300">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Portfolio -->
+      <section id="portfolio">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-4xl font-bold section-title">Recent Work</h2>
+          <a href="/media" class="text-cyan-400 hover:text-purple-400 underline">View All Media</a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {mediaItems.results.map(item => (
+            <MediaCard
+              client:only="react"
+              id={item.id}
+              title={item.title}
+              previewUrl={item.preview_url}
+              acceptsStripe={item.accepts_stripe}
+              acceptsCrypto={item.accepts_crypto}
+            />
+          ))}
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="bg-custom-dark py-16 rounded-xl text-center space-y-6 shadow-inner">
+        <h2 class="text-3xl font-semibold">Ready to Elevate Your Project?</h2>
+        <p class="text-gray-400">Log in to access downloads, manage purchases, or start a new request.</p>
+        <a
+          href={session ? "/account" : "/login"}
+          class="btn-primary inline-block bg-cyan-600 px-6 py-3 rounded-full hover-glow text-lg"
+        >
+          {session ? "Go to Dashboard" : "Log In to Get Started"}
+        </a>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
 </html>

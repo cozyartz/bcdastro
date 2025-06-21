@@ -1,0 +1,56 @@
+---
+import { getSession } from '../lib/auth';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
+import '../styles/global.css';
+
+const session = await getSession(Astro.request);
+if (!session) {
+  return Astro.redirect('/login');
+}
+
+const purchases = await Astro.locals.D1.prepare(
+  'SELECT m.title, p.purchased_at FROM purchases p JOIN media m ON p.media_id = m.id WHERE p.user_id = ?'
+)
+  .bind(session.userId)
+  .all();
+---
+
+<html lang="en">
+  <SEO title="Account | BCDAstro" description="Your downloads, purchases, and session info on Battle Creek Drone." />
+  <body class="bg-gradient-to-br from-gray-950 to-black text-white font-sans overflow-x-hidden min-h-screen">
+    <Header />
+
+    <main class="pt-32 px-4 max-w-4xl mx-auto space-y-16">
+      <section class="text-center space-y-6">
+        <h1 class="text-4xl font-bold animate-fade-in">Your Account</h1>
+        <p class="text-gray-400 max-w-xl mx-auto">Manage your purchased media and log out securely.</p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-semibold text-cyan-400 mb-6">Purchased Media</h2>
+        {purchases.results.length > 0 ? (
+          <ul class="space-y-4">
+            {purchases.results.map(purchase => (
+              <li class="bg-gray-800 p-5 rounded-lg shadow-md card-hover">
+                <div class="text-white font-medium">{purchase.title}</div>
+                <div class="text-sm text-gray-400">Purchased on {new Date(purchase.purchased_at).toLocaleDateString()}</div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-gray-400 italic">No purchases yet.</p>
+        )}
+      </section>
+
+      <form action="/api/logout" method="POST" class="text-center pt-6">
+        <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-full btn-primary hover:bg-red-700">
+          Logout
+        </button>
+      </form>
+    </main>
+
+    <Footer />
+  </body>
+</html>
