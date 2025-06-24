@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSession } from '../lib/auth';
+import { motion } from 'framer-motion';
+
+const session = await getSession(Astro.request, Astro.locals);
+if (!session) return Astro.redirect('/login');
+
+const purchases = await (Astro.locals.D1?.prepare(`
+  SELECT m.title, p.created_at AS purchased_at 
+  FROM purchases p 
+  JOIN media m ON p.media_id = m.id 
+  WHERE p.user_id = ?
+  ORDER BY p.created_at DESC
+`).bind(session.userId).all() || { results: [] });
+---
+
+<Layout>
+  <main className="pt-32 px-4 max-w-4xl mx-auto space-y-16">
+    <motion.section
+      className="text-center space-y-6"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h1 className="text-4xl font-bold section-title">Your Account</h1>
+      <p className="text-gray-400 max-w-xl mx-auto">Manage your purchased media and log out securely.</p>
+    </motion.section>
+
+    <motion.section
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.2, duration: 0.5 }}
+    >
+      <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Purchased Media</h2>
+      {purchases.results.length > 0 ? (
+        <motion.ul
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+          }}
+        >
+          {purchases.results.map((purchase) => (
+            <motion.li
+              key={purchase.title}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              className="bg-gray-800 p-5 rounded-lg shadow-md card-hover hover-glow"
+            >
+              <div className="text-white font-medium truncate">{purchase.title}</div>
+              <div className="text-sm text-gray-400">Purchased on {new Date(purchase.purchased_at).toLocaleDateString()}</div>
+            </motion.li>
+          ))}
+        </motion.ul>
+      ) : (
+        <p className="text-gray-400 italic text-center">No purchases yet.</p>
+      )}
+    </motion.section>
+
+    <motion.form
+      action="/api/logout"
+      method="POST"
+      className="text-center pt-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4, duration: 0.5 }}
+    >
+      <button
+        type="submit"
+        className="bg-red-600 text-white px-6 py-3 rounded-full btn-primary hover:bg-red-700 transition-all duration-300"
+      >
+        Logout
+      </button>
+    </motion.form>
+  </main>
+</Layout>

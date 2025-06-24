@@ -1,0 +1,23 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getSession } from '../lib/auth';
+
+const session = await getSession(Astro.request, Astro.locals);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script src="https://kit.fontawesome.com/8b46356787.js" crossorigin="anonymous"></script>
+    <slot />
+  </head>
+  <body class="bg-gradient-to-br from-gray-950 to-black text-white font-sans min-h-screen antialiased">
+    <Header />
+    <main class="min-h-[calc(100vh-20rem)]">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

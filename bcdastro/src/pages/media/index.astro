@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MediaCard from '../../components/MediaCard.tsx';
+import { getSession } from '../../lib/auth.ts';
+import { motion } from 'framer-motion';
+
+// Type assertion for Astro.locals
+const { D1 } = Astro.locals as { D1: any };
+const session = await getSession(Astro.request, Astro.locals);
+const searchQuery = Astro.url.searchParams.get('q')?.trim() || '';
+let mediaItems;
+
+if (searchQuery) {
+  const searchResponse = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`);
+  const searchData = await searchResponse.json();
+  mediaItems = { results: searchData.results || [] };
+} else {
+  mediaItems = await (D1?.prepare(`
+    SELECT id, title, preview_url, accepts_stripe, accepts_crypto, for_sale, status, type
+    FROM media 
+    WHERE slug IS NOT NULL 
+    AND status = 'published' 
+    AND for_sale = true
+  `).all() || { results: [] });
+}
+---
+
+<Layout>
+  <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
+    <motion.section
+      className="text-center space-y-6 backdrop-blur-sm bg-gray-900/50 rounded-xl p-5"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      <h1 className="text-4xl sm:text-5xl font-extrabold section-title text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+        Media Gallery
+      </h1>
+      {searchQuery && (
+        <p className="text-gray-300">Search results for: "{searchQuery}" <i className="fas fa-search ml-2 animate-pulse-slow"></i></p>
+      )}
+    </motion.section>
+
+    <motion.div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+      }}
+    >
+      {mediaItems.results.length > 0 ? (
+        mediaItems.results.map((item) => (
+          <motion.div
+            key={item.id}
+            custom={item.id}
+            variants={{
+              hidden: { opacity: 0, y: 30, scale: 0.9 },
+              visible: { opacity: 1, y: 0, scale: 1 },
+            }}
+            transition={{ duration: 0.6 }}
+          >
+            <MediaCard
+              client:only="react"
+              id={item.id}
+              title={item.title}
+              previewUrl={item.preview_url}
+              type={item.type}
+              acceptsStripe={item.accepts_stripe}
+              acceptsCrypto={item.accepts_crypto}
+              purchased={false}
+              env={Astro.locals.env}
+            />
+          </motion.div>
+        ))
+      ) : (
+        <p className="text-center text-gray-500 col-span-full italic">No media available for purchase.</p>
+      )}
+    </motion.div>
+  </main>
+</Layout>

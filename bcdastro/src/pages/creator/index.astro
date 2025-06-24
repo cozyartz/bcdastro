@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSession } from '../../lib/auth';
+import CreatorNav from '../../components/CreatorNav.astro';
+import { MediaCard } from '../../components/MediaCard';
+import ChargeStats from '../../components/ChargeStats';
+import { motion } from 'framer-motion';
+
+const session = await getSession(Astro.request, Astro.locals);
+if (!session) return Astro.redirect('/login');
+
+const media = await Astro.locals.D1?.prepare(`
+  SELECT id, title, slug, type, preview_url, created_at FROM media WHERE creator_wallet = ?
+  ORDER BY created_at DESC
+`).bind(session.userId).all() || { results: [] };
+---
+
+<Layout>
+  <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <motion.h1
+      className="text-4xl sm:text-5xl font-extrabold mb-6 text-center section-title text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
+      Your Uploaded Media
+    </motion.h1>
+    {media.results.length > 0 ? (
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+        }}
+      >
+        {media.results.map((item, index) => (
+          <motion.div
+            key={item.id}
+            custom={index}
+            variants={{
+              hidden: { opacity: 0, y: 30, scale: 0.9 },
+              visible: { opacity: 1, y: 0, scale: 1 },
+            }}
+            transition={{ duration: 0.6 }}
+          >
+            <MediaCard
+              id={item.id}
+              title={item.title}
+              type={item.type}
+              previewUrl={item.preview_url}
+              createdAt={item.created_at}
+              env={Astro.locals.env}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
+    ) : (
+      <p className="text-center text-gray-500 italic">No media uploaded yet.</p>
+    )}
+    <ChargeStats userId={session.userId} client:load />
+  </main>
+</Layout>

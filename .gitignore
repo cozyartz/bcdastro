@@ -2,22 +2,20 @@
 dist/
 .astro/
 
-# Dependencies
+# Node.js dependencies
 node_modules/
 
 # Environment variables
 .env
-.env.*.local
-.env.local
-.env.production
-.env.development
+.env.*
+!.env.example  # Allow an example file for documentation
 
 # Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-*.log
 
 # macOS system files
 .DS_Store
@@ -30,9 +28,14 @@ pnpm-debug.log*
 # TypeScript build artifacts
 *.tsbuildinfo
 
-# Astro image cache
+# Astro image cache and assets
 /public/assets/
+.astro-cache/
 
-# Local cache
-.cache/
+# Local configuration and cache
 *.local
+.cache/
+
+# Wrangler-specific files
+.wrangler/
+*.worker.js

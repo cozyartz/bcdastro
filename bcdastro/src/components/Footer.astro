@@ -1,0 +1,34 @@
+---
+import { motion } from 'framer-motion';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="w-full bg-gradient-to-r from-black/80 via-black/60 to-black/80 text-gray-400 py-8 text-center mt-24 backdrop-blur-sm border-t border-gray-800">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, staggerChildren: 0.1 }}
+    class="space-y-4"
+  >
+    <motion.p
+      class="text-lg"
+      transition={{ delay: 0.2 }}
+    >
+      <i class="fas fa-copyright mr-1"></i> {currentYear} Battle Creek Drone, LLC. All rights reserved.
+    </motion.p>
+    <motion.p
+      class="mt-2 text-sm text-gray-500 hover:text-cyan-400 transition-colors duration-300"
+      transition={{ delay: 0.4 }}
+    >
+      Coded with <i class="fas fa-heart text-red-400"></i> by Cozyartz Media Group
+    </motion.p>
+    <motion.a
+      href="/terms"
+      class="mt-2 inline-block text-cyan-400 hover:underline transition-colors duration-300"
+      transition={{ delay: 0.6 }}
+    >
+      <i class="fas fa-file-contract mr-1"></i> Terms of Service
+    </motion.a>
+  </motion.div>
+</footer>

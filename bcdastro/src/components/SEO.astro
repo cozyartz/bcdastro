@@ -1,0 +1,76 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article';
+  robots?: string;
+  canonical?: string;
+  noIndex?: boolean; // Option to disable indexing
+}
+
+const {
+  title,
+  description,
+  image = `${Astro.site?.href || 'https://battlecreekdrone.com'}/meta/preview.jpg`,
+  url = Astro.url.href || 'https://battlecreekdrone.com',
+  type = 'website',
+  robots = 'index, follow',
+  canonical = url,
+  noIndex = false,
+} = Astro.props;
+
+// Ensure trailing slash for canonical URL
+const cleanCanonical = canonical.endsWith('/') ? canonical : `${canonical}/`;
+
+// Fallback site URL from environment if Astro.site is undefined
+const siteUrl = Astro.site?.href || import.meta.env.SITE_URL || 'https://battlecreekdrone.com';
+---
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="generator" content="Astro v4.16.18" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content={noIndex ? 'noindex, nofollow' : robots} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={`${siteUrl}${image}`} />
+  <meta property="og:url" content={`${siteUrl}${url}`} />
+  <meta property="og:type" content={type} />
+  <meta property="og:site_name" content="BCDAstro" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={`${siteUrl}${image}`} />
+  <meta name="twitter:site" content="@BattleCreekDrone" /> <!-- Optional: Add your Twitter handle -->
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={cleanCanonical} />
+
+  <!-- Favicon and Manifest (Optional but recommended) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Structured Data (Basic JSON-LD) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "BCDAstro",
+      "url": {siteUrl},
+      "description": {description},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/media?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+</head>

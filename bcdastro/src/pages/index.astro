@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { motion } from 'framer-motion';
+
+const featuredMedia = await (Astro.locals.D1?.prepare(`
+  SELECT id, title, preview_url, type 
+  FROM media 
+  WHERE status = 'published' AND for_sale = true 
+  ORDER BY created_at DESC 
+  LIMIT 4
+`).all() || { results: [] });
+---
+
+<Layout>
+  <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+    <motion.section
+      className="text-center space-y-8 backdrop-blur-md bg-gray-900/50 rounded-xl p-6"
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
+    >
+      <h1 className="text-5xl sm:text-6xl font-extrabold section-title text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+        Welcome to BCDAstro
+      </h1>
+      <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+        Capture the skies with premium drone footage from Battle Creek Drone, LLC. Upload, buy, and explore with ease.
+      </p>
+      <motion.a
+        href="/signup"
+        className="inline-flex items-center bg-gradient-to-r from-cyan-500 to-purple-600 text-white px-8 py-3 rounded-xl btn-primary shadow-lg"
+        whileHover={{ scale: 1.1, rotate: 2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.3 }}
+      >
+        Get Started <i className="fas fa-rocket ml-2 animate-pulse-slow"></i>
+      </motion.a>
+    </motion.section>
+
+    <motion.section
+      className="space-y-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.2, duration: 0.7 }}
+    >
+      <h2 className="text-3xl sm:text-4xl font-semibold text-center text-cyan-400">Featured Media</h2>
+      {featuredMedia.results.length > 0 ? (
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+          }}
+        >
+          {featuredMedia.results.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.9 },
+                visible: { opacity: 1, y: 0, scale: 1 },
+              }}
+              className="bg-gray-800/80 rounded-xl overflow-hidden shadow-xl card-hover backdrop-blur-sm border border-gray-700/50"
+            >
+              {item.type === 'video' ? (
+                <video src={item.preview_url} muted loop className="w-full h-48 object-cover" />
+              ) : (
+                <img src={item.preview_url} alt={item.title} className="w-full h-48 object-cover" />
+              )}
+              <div className="p-4 text-center">
+                <h3 className="text-white font-medium truncate">{item.title}</h3>
+                <a href={`/media/${item.id}`} className="text-cyan-300 hover:text-purple-400 mt-2 inline-block transition-colors">
+                  View <i className="fas fa-eye"></i>
+                </a>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <p className="text-center text-gray-500 italic">No featured media available.</p>
+      )}
+    </motion.section>
+
+    <motion.section
+      className="text-center space-y-6 bg-gray-800/70 p-6 rounded-xl shadow-lg backdrop-blur-md"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4, duration: 0.7 }}
+    >
+      <h2 className="text-2xl sm:text-3xl font-semibold text-cyan-400">Ready to Fly?</h2>
+      <p className="text-gray-400 max-w-md mx-auto">Join our community of drone enthusiasts and start creating today.</p>
+      <motion.a
+        href="/signup"
+        className="inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl btn-primary shadow-lg"
+        whileHover={{ scale: 1.1, rotate: -2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.3 }}
+      >
+        Sign Up Now <i className="fas fa-paper-plane animate-float"></i>
+      </motion.a>
+    </motion.section>
+  </main>
+</Layout>

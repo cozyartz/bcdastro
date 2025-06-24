@@ -1,0 +1,70 @@
+---
+import { getSession } from '../../lib/auth';
+import CreatorNav from '../../components/CreatorNav.astro';
+import { MediaCard } from '../../components/MediaCard';
+import { motion } from 'framer-motion';
+
+const session = await getSession(Astro.request);
+if (!session) return Astro.redirect('/login');
+
+const library = await Astro.locals.D1.prepare(`
+  SELECT id, title, slug, type, preview_url, created_at FROM media WHERE creator_wallet = ?
+  ORDER BY created_at DESC
+`).bind(session.userId).all();
+---
+
+<html lang="en">
+  <head>
+    <title>Your Library | Creator Portal</title>
+    <style is:global>
+      @import '../../styles/global.css';
+      @import '../../styles/tailwind.css';
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-gray-950 to-black text-white font-sans min-h-screen antialiased">
+    <CreatorNav />
+    <main class="container mx-auto px-4 py-12">
+      <motion.h1
+        class="text-4xl font-bold mb-6 text-center section-title"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        Your Media Library
+      </motion.h1>
+      {library.results.length > 0 ? (
+        <motion.div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
+          }}
+        >
+          {library.results.map((item, index) => (
+            <motion.div
+              key={item.id}
+              custom={index}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.5 }}
+            >
+              <MediaCard
+                id={item.id}
+                title={item.title}
+                type={item.type}
+                previewUrl={item.preview_url}
+                createdAt={item.created_at}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <p class="text-center text-gray-400">Your library is empty.</p>
+      )}
+    </main>
+  </body>
+</html>

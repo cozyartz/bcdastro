@@ -1,0 +1,124 @@
+---
+import { getSession } from '../lib/auth.ts';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import SEO from '../components/SEO.astro';
+import { motion } from 'framer-motion';
+import ChargeStats from '../components/ChargeStats.tsx';
+import { getWalletBalance } from '../lib/coinbase.ts';
+import { getETHPrice } from '../../bcdastro/src/lib/pricing.ts';
+
+const session = await getSession(Astro.request, Astro.locals);
+if (!session) return Astro.redirect('/login');
+
+const purchases = await (Astro.locals.D1?.prepare(`
+  SELECT m.title, p.created_at AS purchased_at, p.price_paid
+  FROM purchases p JOIN media m ON p.media_id = m.id 
+  WHERE p.user_id = ?
+  ORDER BY p.created_at DESC
+`).bind(session.userId).all() || { results: [] });
+
+const uploads = await (Astro.locals.D1?.prepare(`
+  SELECT id, title, created_at 
+  FROM media 
+  WHERE creator_wallet = ? 
+  ORDER BY created_at DESC
+`).bind(session.userId).all() || { results: [] });
+
+const walletBalance = await getWalletBalance(session.userId, Astro.locals);
+const ethPrice = await getETHPrice();
+const usdBalance = walletBalance.balance ? (parseFloat(walletBalance.balance) * ethPrice).toFixed(2) : '0.00';
+---
+
+<html lang="en">
+  <head>
+    <SEO title="Dashboard | BCDAstro" description="Your uploads, purchases, wallet, and stats on Battle Creek Drone." />
+    <style is:global>
+      @import '../styles/global.css';
+      @import '../styles/tailwind.css';
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-gray-950 to-black text-white font-sans min-h-screen antialiased">
+    <Header />
+    <main class="pt-32 px-4 max-w-7xl mx-auto space-y-16">
+      <motion.section
+        class="text-center space-y-6"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 class="text-4xl font-bold section-title">Your Dashboard</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Manage uploads, track purchases, check your wallet, and view stats.</p>
+      </motion.section>
+
+      <motion.div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
+        <!-- Uploads Section -->
+        <motion.section
+          class="bg-gray-800 p-6 rounded-lg shadow-lg card-hover"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <h2 class="text-xl font-semibold text-cyan-400 mb-4">Your Uploads</h2>
+          {uploads.results.length > 0 ? (
+            <ul class="space-y-3 max-h-64 overflow-y-auto">
+              {uploads.results.map((upload) => (
+                <li class="text-white truncate">{upload.title} <span class="text-gray-500 text-sm">{new Date(upload.created_at).toLocaleDateString()}</span></li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-gray-400 italic">No uploads yet.</p>
+          )}
+        </motion.section>
+
+        <!-- Purchases Section -->
+        <motion.section
+          class="bg-gray-800 p-6 rounded-lg shadow-lg card-hover"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h2 class="text-xl font-semibold text-cyan-400 mb-4">Your Purchases</h2>
+          {purchases.results.length > 0 ? (
+            <ul class="space-y-3 max-h-64 overflow-y-auto">
+              {purchases.results.map((purchase) => (
+                <li class="text-white truncate">{purchase.title} <span class="text-gray-500 text-sm">${(purchase.price_paid / 100).toFixed(2)} on {new Date(purchase.purchased_at).toLocaleDateString()}</span></li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-gray-400 italic">No purchases yet.</p>
+          )}
+        </motion.section>
+
+        <!-- Wallet Section -->
+        <motion.section
+          class="bg-gray-800 p-6 rounded-lg shadow-lg card-hover"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h2 class="text-xl font-semibold text-cyan-400 mb-4">Your Wallet</h2>
+          <p class="text-white">ETH Balance: {walletBalance.balance}</p>
+          <p class="text-gray-300">USD Value: ${usdBalance}</p>
+        </motion.section>
+      </motion.div>
+
+      <!-- Stats Section -->
+      <motion.section
+        class="bg-gray-800 p-6 rounded-lg shadow-lg card-hover"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.6 }}
+      >
+        <h2 class="text-xl font-semibold text-cyan-400 mb-4">Your Stats</h2>
+        <ChargeStats userId={session.userId} client:load />
+      </motion.section>
+    </main>
+    <Footer />
+  </body>
+</html>

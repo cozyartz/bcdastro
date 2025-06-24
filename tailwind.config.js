@@ -16,12 +16,12 @@ module.exports = {
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
         },
         pulse: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.6' },
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.6 },
         },
       },
     },
