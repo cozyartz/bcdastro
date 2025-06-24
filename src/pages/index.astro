@@ -1,0 +1,76 @@
+---
+import Layout from '../components/Layout.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+---
+
+<Layout title="Retro Future - 80s Inspired Modern Web">
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="neon-text">RETRO FUTURE</h1>
+      <p>Experience the perfect blend of 80s nostalgia and modern technology</p>
+      <a href="#features" class="retro-button">
+        <i class="fas fa-rocket"></i> Explore Now
+      </a>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <FeatureCard 
+        icon="fas fa-bolt"
+        title="Lightning Fast"
+        description="Built with cutting-edge technology for blazing fast performance that would make even a DeLorean jealous."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-palette"
+        title="Radical Design"
+        description="Totally tubular visual effects with hypercolor gradients and neon aesthetics that scream awesome."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-shield-alt"
+        title="Secure & Modern"
+        description="Enterprise-grade security with modern web standards. Professional quality with that gnarly 80s vibe."
+      />
+      
+      <FeatureCard 
+        icon="fab fa-bitcoin"
+        title="Crypto Ready"
+        description="Integrated support for modern payment systems including cryptocurrency and traditional methods."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-mobile-alt"
+        title="Responsive"
+        description="Looks totally rad on any device - from your Walkman-sized phone to your massive CRT monitor."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-code"
+        title="Developer Friendly"
+        description="Clean, maintainable code that's easier to work with than programming a VCR."
+      />
+    </section>
+
+    <!-- Call to Action -->
+    <section class="hero">
+      <h2 class="neon-text" style="font-size: 2.5rem;">Ready to Go Back to the Future?</h2>
+      <p>Join the retro revolution and experience the web like it's 1985... but better!</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+        <a href="/contact" class="retro-button">
+          <i class="fas fa-phone"></i> Get Started
+        </a>
+        <a href="/about" class="retro-button">
+          <i class="fas fa-info-circle"></i> Learn More
+        </a>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  #features {
+    scroll-margin-top: 2rem;
+  }
+</style>

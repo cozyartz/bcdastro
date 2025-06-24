@@ -1,0 +1,52 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Amazing 80s-inspired modern web experience" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+    
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    
+    <title>{title}</title>
+  </head>
+  <body>
+    <!-- Grid overlay for 80s effect -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Floating shapes -->
+    <div class="floating-shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav">
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="/about" class="nav-link"><i class="fas fa-user"></i> About</a></li>
+        <li><a href="/services" class="nav-link"><i class="fas fa-cogs"></i> Services</a></li>
+        <li><a href="/contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+      </ul>
+    </nav>
+    
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

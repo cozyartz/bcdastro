@@ -1,0 +1,76 @@
+---
+import Layout from '../components/Layout.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+---
+
+<Layout title="Services - Retro Future">
+  <div class="container">
+    <section class="hero">
+      <h1 class="neon-text">Our Services</h1>
+      <p>Professional solutions with that radical 80s flair</p>
+    </section>
+
+    <section class="features">
+      <FeatureCard 
+        icon="fas fa-laptop-code"
+        title="Web Development"
+        description="Custom websites that look fresh and perform like a well-tuned sports car from the future."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-paint-brush"
+        title="UI/UX Design"
+        description="User interfaces so smooth they'd make even the slickest 80s music video jealous."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-shopping-cart"
+        title="E-Commerce"
+        description="Online stores with integrated payment processing including Stripe and cryptocurrency support."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-chart-line"
+        title="Analytics"
+        description="Data insights more revealing than a crystal ball, presented in totally tubular dashboards."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-cloud"
+        title="Cloud Solutions"
+        description="Scalable infrastructure that's more reliable than your favorite cassette tape."
+      />
+      
+      <FeatureCard 
+        icon="fas fa-headset"
+        title="Support"
+        description="24/7 support that's more dependable than your Walkman's battery life."
+      />
+    </section>
+
+    <section class="glass" style="padding: 3rem; margin: 2rem 0; border-radius: 20px; text-align: center;">
+      <h2 style="color: var(--neon-cyan); margin-bottom: 2rem;">
+        <i class="fas fa-credit-card"></i> Payment Integration
+      </h2>
+      <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+        We specialize in integrating modern payment solutions including Stripe for traditional payments 
+        and Coinbase for cryptocurrency transactions. Your customers can pay with confidence using 
+        their preferred method.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
+          <i class="fab fa-stripe"></i> Stripe
+        </span>
+        <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
+          <i class="fab fa-bitcoin"></i> Bitcoin
+        </span>
+        <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
+          <i class="fab fa-ethereum"></i> Ethereum
+        </span>
+        <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
+          <i class="fab fa-cc-visa"></i> Credit Cards
+        </span>
+      </div>
+    </section>
+  </div>
+</Layout>

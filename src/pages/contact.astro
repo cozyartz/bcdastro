@@ -1,0 +1,123 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout title="Contact - Retro Future">
+  <div class="container">
+    <section class="hero">
+      <h1 class="neon-text">Get In Touch</h1>
+      <p>Ready to make something totally awesome together?</p>
+    </section>
+
+    <section class="glass" style="padding: 3rem; margin: 2rem 0; border-radius: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      <form style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div>
+          <label for="name" style="display: block; margin-bottom: 0.5rem; color: var(--neon-cyan);">
+            <i class="fas fa-user"></i> Name
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            required
+            style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: var(--glass-bg); color: white; backdrop-filter: blur(10px);"
+            placeholder="Your awesome name"
+          />
+        </div>
+        
+        <div>
+          <label for="email" style="display: block; margin-bottom: 0.5rem; color: var(--neon-cyan);">
+            <i class="fas fa-envelope"></i> Email
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required
+            style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: var(--glass-bg); color: white; backdrop-filter: blur(10px);"
+            placeholder="your.email@example.com"
+          />
+        </div>
+        
+        <div>
+          <label for="service" style="display: block; margin-bottom: 0.5rem; color: var(--neon-cyan);">
+            <i class="fas fa-cogs"></i> Service Interest
+          </label>
+          <select 
+            id="service" 
+            name="service"
+            style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: var(--glass-bg); color: white; backdrop-filter: blur(10px);"
+          >
+            <option value="">Select a service</option>
+            <option value="web-development">Web Development</option>
+            <option value="ui-ux-design">UI/UX Design</option>
+            <option value="ecommerce">E-Commerce</option>
+            <option value="payment-integration">Payment Integration</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div>
+          <label for="message" style="display: block; margin-bottom: 0.5rem; color: var(--neon-cyan);">
+            <i class="fas fa-comment"></i> Message
+          </label>
+          <textarea 
+            id="message" 
+            name="message" 
+            rows="5" 
+            required
+            style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: var(--glass-bg); color: white; backdrop-filter: blur(10px); resize: vertical;"
+            placeholder="Tell us about your radical project idea..."
+          ></textarea>
+        </div>
+        
+        <button type="submit" class="retro-button" style="align-self: center; margin-top: 1rem;">
+          <i class="fas fa-paper-plane"></i> Send Message
+        </button>
+      </form>
+    </section>
+
+    <section style="text-align: center; margin-top: 3rem;">
+      <h3 style="color: var(--neon-pink); margin-bottom: 2rem;">
+        <i class="fas fa-map-marker-alt"></i> Find Us
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+        <div class="glass" style="padding: 2rem; border-radius: 15px;">
+          <i class="fas fa-envelope" style="font-size: 2rem; color: var(--neon-cyan); margin-bottom: 1rem;"></i>
+          <h4>Email</h4>
+          <p>hello@retrofuture.com</p>
+        </div>
+        <div class="glass" style="padding: 2rem; border-radius: 15px;">
+          <i class="fas fa-phone" style="font-size: 2rem; color: var(--neon-pink); margin-bottom: 1rem;"></i>
+          <h4>Phone</h4>
+          <p>+1 (555) 80S-VIBE</p>
+        </div>
+        <div class="glass" style="padding: 2rem; border-radius: 15px;">
+          <i class="fas fa-clock" style="font-size: 2rem; color: var(--neon-purple); margin-bottom: 1rem;"></i>
+          <h4>Hours</h4>
+          <p>24/7 Digital</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+  
+  select option {
+    background: var(--dark-bg);
+    color: white;
+  }
+</style>
