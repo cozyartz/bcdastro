@@ -1,5 +1,5 @@
 ---
-import DarkToggle from './DarkToggle.astro';
+import DarkToggle from './DarkToggle.tsx';
 
 const nav = [
   { href: "#services", label: "Services" },
@@ -20,7 +20,7 @@ const nav = [
           <a href={item.href} class="text-gray-300 hover:text-cyan-400 transition-colors">{item.label}</a>
         ))}
       </nav>
-      <DarkToggle client:load />
+      <DarkToggle client:only="react" />
     </div>
   </div>
 </header>

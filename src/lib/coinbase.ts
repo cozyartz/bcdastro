@@ -2,17 +2,22 @@ import { ethers } from 'ethers';
 import { Checkout } from '@coinbase/onchainkit/checkout';
 
 export async function createCharge(mediaId: string, amount: number, userId: string): Promise<string> {
-  const response = await fetch('https://api.commerce.coinbase.com/charges', {
+  // Make request to our secure API endpoint instead of directly to Coinbase
+  const response = await fetch('/api/createCharge', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CC-Api-Key': import.meta.env.CDP_API_KEY_SECRET,
     },
     body: JSON.stringify({
       local_price: { amount: amount.toString(), currency: 'USDC' },
       metadata: { mediaId, userId },
     }),
   });
+  
+  if (!response.ok) {
+    throw new Error('Failed to create charge');
+  }
+  
   const data = await response.json();
   return data.id;
 }

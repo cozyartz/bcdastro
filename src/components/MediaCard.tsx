@@ -33,9 +33,29 @@ export default function MediaCard({
     if (!price) return;
     setLoading(true);
     try {
-      const chargeId = await createCharge(id, price, 'user123'); // Replace with actual user ID
-      window.location.href = `/media/${id}?charge=${chargeId}`;
-    } catch {
+      // Get user session/token (you may need to implement proper auth context)
+      const token = localStorage.getItem('authToken'); // Adjust based on your auth implementation
+      
+      const response = await fetch('/api/createCharge', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+        body: JSON.stringify({
+          local_price: { amount: price.toString(), currency: 'USDC' },
+          metadata: { mediaId: id, userId: 'user123' }, // Replace with actual user ID from auth context
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create charge');
+      }
+
+      const data = await response.json();
+      window.location.href = `/media/${id}?charge=${data.id}`;
+    } catch (error) {
+      console.error('Charge creation error:', error);
       setError('Charge creation failed');
     }
     setLoading(false);
