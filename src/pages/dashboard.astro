@@ -1,0 +1,23 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout title="Creator Dashboard - Battle Creek Drone">
+  <div class="container">
+    <div id="dashboard-content">
+      <!-- Content will be loaded by React component -->
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import Dashboard from '../components/Dashboard.tsx';
+
+  const container = document.getElementById('dashboard-content');
+  if (container) {
+    const root = createRoot(container);
+    root.render(React.createElement(Dashboard));
+  }
+</script>
