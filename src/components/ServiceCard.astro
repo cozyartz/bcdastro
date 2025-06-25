@@ -1,0 +1,31 @@
+---
+export interface Props {
+  icon: string;
+  title: string;
+  description: string;
+  features?: string[];
+}
+
+const { icon, title, description, features = [] } = Astro.props;
+---
+
+<div class="service-card glass">
+  <div class="service-icon">
+    <i class={icon}></i>
+  </div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  {features.length > 0 && (
+    <ul style="text-align: left; margin-bottom: 1.5rem; opacity: 0.8;">
+      {features.map(feature => (
+        <li style="margin-bottom: 0.5rem;">
+          <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
+          {feature}
+        </li>
+      ))}
+    </ul>
+  )}
+  <a href="/contact" class="professional-button">
+    <i class="fas fa-calendar-alt"></i> Book Service
+  </a>
+</div>
