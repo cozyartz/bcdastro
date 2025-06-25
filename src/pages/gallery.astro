@@ -1,158 +1,146 @@
 ---
 import Layout from '../components/Layout.astro';
+import MediaCard from '../components/MediaCard.astro';
+import { cloudflareService } from '../lib/cloudflare';
+
+// Get gallery data from Cloudflare
+const galleryItems = await cloudflareService.getGalleryItems();
+const categories = await cloudflareService.getCategories();
+
+// Group items by category for stats
+const categoryStats = categories.map(category => ({
+  name: category,
+  count: galleryItems.filter(item => item.category === category).length
+}));
 ---
 
-<Layout title="Gallery - Battle Creek Drone">
+<Layout title="Professional Aerial Media Gallery - Battle Creek Drone">
   <div class="container">
+    <!-- Professional Hero Section -->
     <section class="hero">
-      <div class="subtitle">Premium Aerial Content</div>
-      <h1>Gallery & Shop</h1>
-      <p>Browse and purchase high-quality drone footage and photography from Battle Creek and surrounding areas. All content available for immediate download.</p>
+      <div class="hero-content">
+        <div class="subtitle">Premium Aerial Content Library</div>
+        <h1>Professional Media Gallery</h1>
+        <p class="hero-description">
+          Discover our extensive collection of high-quality aerial photography and videography. 
+          Each piece is professionally captured, edited, and available for immediate licensing and download.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">{galleryItems.length}</span>
+            <span class="stat-label">Media Assets</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{categories.length}</span>
+            <span class="stat-label">Categories</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">4K+</span>
+            <span class="stat-label">Resolution</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter and Search Section -->
+    <section class="filter-section glass">
+      <div class="filter-header">
+        <h2>Browse Our Collection</h2>
+        <p>Filter by category or search for specific content</p>
+      </div>
+      
+      <div class="filter-controls">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            placeholder="Search media by title, description, or tags..."
+            id="media-search"
+          />
+        </div>
+        
+        <div class="category-filters">
+          <button class="filter-btn active" data-category="all">
+            <i class="fas fa-th"></i>
+            All ({galleryItems.length})
+          </button>
+          {categoryStats.map(category => (
+            <button class="filter-btn" data-category={category.name.toLowerCase()}>
+              <i class="fas fa-folder"></i>
+              {category.name} ({category.count})
+            </button>
+          ))}
+        </div>
+      </div>
     </section>
 
     <!-- Featured Content -->
-    <section class="content-section glass">
-      <h2 class="section-title">Featured Content</h2>
-      <p class="section-subtitle">Our most popular aerial footage and photography</p>
+    <section class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">Featured Content</h2>
+        <p class="section-subtitle">Our most popular and highest-quality aerial media</p>
+      </div>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div class="gallery-item">
-          <div class="gallery-image">
-            <img src="https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Aerial view of Battle Creek downtown" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-            <div class="gallery-overlay">
-              <i class="fas fa-play-circle" style="font-size: 3rem; color: white;"></i>
-            </div>
-          </div>
-          <div class="gallery-info">
-            <h3>Downtown Battle Creek</h3>
-            <p>4K aerial footage of downtown Battle Creek during golden hour</p>
-            <div class="gallery-details">
-              <span class="format"><i class="fas fa-video"></i> 4K Video</span>
-              <span class="duration"><i class="fas fa-clock"></i> 2:30</span>
-            </div>
-            <div class="gallery-price">
-              <span class="price">$49.99</span>
-              <button class="buy-button">
-                <i class="fas fa-shopping-cart"></i> Purchase
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-item">
-          <div class="gallery-image">
-            <img src="https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Agricultural fields aerial view" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-            <div class="gallery-overlay">
-              <i class="fas fa-camera" style="font-size: 3rem; color: white;"></i>
-            </div>
-          </div>
-          <div class="gallery-info">
-            <h3>Agricultural Landscapes</h3>
-            <p>High-resolution photos of local farmland and crop fields</p>
-            <div class="gallery-details">
-              <span class="format"><i class="fas fa-image"></i> RAW Photos</span>
-              <span class="duration"><i class="fas fa-images"></i> 15 Images</span>
-            </div>
-            <div class="gallery-price">
-              <span class="price">$29.99</span>
-              <button class="buy-button">
-                <i class="fas fa-shopping-cart"></i> Purchase
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="gallery-item">
-          <div class="gallery-image">
-            <img src="https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Sunset aerial footage" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-            <div class="gallery-overlay">
-              <i class="fas fa-play-circle" style="font-size: 3rem; color: white;"></i>
-            </div>
-          </div>
-          <div class="gallery-info">
-            <h3>Sunset Collection</h3>
-            <p>Breathtaking sunset footage over Michigan landscapes</p>
-            <div class="gallery-details">
-              <span class="format"><i class="fas fa-video"></i> 4K Video</span>
-              <span class="duration"><i class="fas fa-clock"></i> 5:15</span>
-            </div>
-            <div class="gallery-price">
-              <span class="price">$79.99</span>
-              <button class="buy-button">
-                <i class="fas fa-shopping-cart"></i> Purchase
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="media-grid" id="media-grid">
+        {galleryItems.slice(0, 6).map(media => (
+          <MediaCard media={media} />
+        ))}
+      </div>
+      
+      <div class="load-more-section">
+        <button class="professional-button" id="load-more-btn">
+          <i class="fas fa-plus"></i>
+          Load More Content
+        </button>
       </div>
     </section>
 
-    <!-- Categories -->
+    <!-- Categories Overview -->
     <section class="content-section glass">
-      <h2 class="section-title">Browse by Category</h2>
-      <p class="section-subtitle">Find the perfect aerial content for your project</p>
+      <div class="section-header">
+        <h2 class="section-title">Content Categories</h2>
+        <p class="section-subtitle">Explore our organized collection by category</p>
+      </div>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div class="category-card">
-          <i class="fas fa-city" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Urban & Cityscapes</h3>
-          <p>Downtown areas, commercial districts, and urban development</p>
-          <span class="item-count">24 items</span>
-        </div>
-        
-        <div class="category-card">
-          <i class="fas fa-tree" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Nature & Landscapes</h3>
-          <p>Forests, lakes, rivers, and natural Michigan beauty</p>
-          <span class="item-count">18 items</span>
-        </div>
-        
-        <div class="category-card">
-          <i class="fas fa-seedling" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Agricultural</h3>
-          <p>Farmland, crop fields, and agricultural operations</p>
-          <span class="item-count">32 items</span>
-        </div>
-        
-        <div class="category-card">
-          <i class="fas fa-home" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Real Estate</h3>
-          <p>Properties, developments, and neighborhood overviews</p>
-          <span class="item-count">15 items</span>
-        </div>
-        
-        <div class="category-card">
-          <i class="fas fa-industry" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Industrial</h3>
-          <p>Factories, infrastructure, and commercial facilities</p>
-          <span class="item-count">12 items</span>
-        </div>
-        
-        <div class="category-card">
-          <i class="fas fa-calendar-alt" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Events</h3>
-          <p>Festivals, gatherings, and special occasions</p>
-          <span class="item-count">8 items</span>
-        </div>
+      <div class="categories-grid">
+        {categoryStats.map(category => (
+          <div class="category-card" data-category={category.name.toLowerCase()}>
+            <div class="category-icon">
+              {category.name === 'Urban' && <i class="fas fa-city"></i>}
+              {category.name === 'Agricultural' && <i class="fas fa-seedling"></i>}
+              {category.name === 'Nature' && <i class="fas fa-tree"></i>}
+              {category.name === 'Industrial' && <i class="fas fa-industry"></i>}
+              {category.name === 'Real Estate' && <i class="fas fa-home"></i>}
+              {category.name === 'Construction' && <i class="fas fa-hard-hat"></i>}
+            </div>
+            <h3>{category.name}</h3>
+            <p>Professional {category.name.toLowerCase()} aerial content</p>
+            <div class="category-stats">
+              <span class="item-count">{category.count} items</span>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
 
-    <!-- Licensing & Usage -->
+    <!-- Licensing Information -->
     <section class="content-section glass">
-      <h2 class="section-title">Licensing & Usage Rights</h2>
-      <p class="section-subtitle">Flexible licensing options for your needs</p>
+      <div class="section-header">
+        <h2 class="section-title">Professional Licensing</h2>
+        <p class="section-subtitle">Flexible licensing options for commercial and personal use</p>
+      </div>
       
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+      <div class="licensing-grid">
         <div class="license-card">
           <div class="license-header">
-            <i class="fas fa-user" style="font-size: 2rem; color: var(--accent-cyan);"></i>
-            <h3>Personal License</h3>
-            <span class="license-price">Standard Price</span>
+            <i class="fas fa-user"></i>
+            <h3>Standard License</h3>
+            <span class="license-price">Base Price</span>
           </div>
           <ul class="license-features">
             <li><i class="fas fa-check"></i> Personal projects</li>
             <li><i class="fas fa-check"></i> Social media use</li>
-            <li><i class="fas fa-check"></i> Non-commercial use</li>
+            <li><i class="fas fa-check"></i> Educational purposes</li>
             <li><i class="fas fa-times"></i> Commercial use</li>
             <li><i class="fas fa-times"></i> Resale rights</li>
           </ul>
@@ -160,186 +148,207 @@ import Layout from '../components/Layout.astro';
         
         <div class="license-card featured">
           <div class="license-header">
-            <i class="fas fa-briefcase" style="font-size: 2rem; color: var(--accent-cyan);"></i>
+            <i class="fas fa-briefcase"></i>
             <h3>Commercial License</h3>
-            <span class="license-price">+50% Premium</span>
+            <span class="license-price">+75% Premium</span>
           </div>
           <ul class="license-features">
             <li><i class="fas fa-check"></i> Commercial projects</li>
             <li><i class="fas fa-check"></i> Marketing materials</li>
             <li><i class="fas fa-check"></i> Website usage</li>
             <li><i class="fas fa-check"></i> Print media</li>
-            <li><i class="fas fa-times"></i> Resale rights</li>
+            <li><i class="fas fa-check"></i> Broadcast rights</li>
           </ul>
         </div>
         
         <div class="license-card">
           <div class="license-header">
-            <i class="fas fa-globe" style="font-size: 2rem; color: var(--accent-cyan);"></i>
+            <i class="fas fa-crown"></i>
             <h3>Extended License</h3>
-            <span class="license-price">+100% Premium</span>
+            <span class="license-price">+150% Premium</span>
           </div>
           <ul class="license-features">
             <li><i class="fas fa-check"></i> Unlimited usage</li>
-            <li><i class="fas fa-check"></i> Broadcast rights</li>
-            <li><i class="fas fa-check"></i> Resale rights</li>
-            <li><i class="fas fa-check"></i> Exclusive options</li>
-            <li><i class="fas fa-check"></i> Custom licensing</li>
+            <li><i class="fas fa-check"></i> Exclusive rights</li>
+            <li><i class="fas fa-check"></i> Resale permitted</li>
+            <li><i class="fas fa-check"></i> Custom modifications</li>
+            <li><i class="fas fa-check"></i> Priority support</li>
           </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Payment Information -->
-    <section class="content-section glass">
-      <h2 class="section-title">Secure Payment Processing</h2>
-      <p class="section-subtitle">Safe and convenient payment options</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="text-align: center; padding: 2rem;">
-          <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Secure Checkout</h3>
-          <p style="opacity: 0.8; margin-bottom: 1.5rem;">SSL encrypted payment processing with industry-standard security protocols.</p>
-          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <span class="payment-method"><i class="fab fa-cc-visa"></i> Visa</span>
-            <span class="payment-method"><i class="fab fa-cc-mastercard"></i> Mastercard</span>
-            <span class="payment-method"><i class="fab fa-cc-amex"></i> Amex</span>
-            <span class="payment-method"><i class="fab fa-paypal"></i> PayPal</span>
-          </div>
-        </div>
-        
-        <div style="text-align: center; padding: 2rem;">
-          <i class="fas fa-download" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Instant Download</h3>
-          <p style="opacity: 0.8; margin-bottom: 1.5rem;">Immediate access to your purchased content with high-speed download links.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li><i class="fas fa-check"></i> Multiple format options</li>
-            <li><i class="fas fa-check"></i> Full resolution files</li>
-            <li><i class="fas fa-check"></i> Lifetime re-download</li>
-          </ul>
-        </div>
-        
-        <div style="text-align: center; padding: 2rem;">
-          <i class="fas fa-headset" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3>Customer Support</h3>
-          <p style="opacity: 0.8; margin-bottom: 1.5rem;">Dedicated support team to help with licensing questions and technical issues.</p>
-          <a href="/contact" class="professional-button">
-            <i class="fas fa-envelope"></i> Contact Support
-          </a>
         </div>
       </div>
     </section>
 
     <!-- Call to Action -->
     <section class="hero">
-      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Need Custom Content?</h2>
-      <p>Can't find what you're looking for? We offer custom drone photography and videography services.</p>
-      <div class="flex gap-4 justify-center flex-wrap mt-4">
-        <a href="/contact" class="professional-button">
-          <i class="fas fa-camera"></i> Request Custom Work
-        </a>
-        <a href="/services" class="professional-button secondary">
-          <i class="fas fa-drone"></i> View Services
-        </a>
+      <div class="hero-content">
+        <h2>Need Custom Content?</h2>
+        <p>
+          Can't find exactly what you're looking for? Our professional drone pilots can create 
+          custom aerial content tailored to your specific requirements.
+        </p>
+        <div class="cta-buttons">
+          <a href="/contact" class="professional-button">
+            <i class="fas fa-camera"></i>
+            Request Custom Work
+          </a>
+          <a href="/services" class="professional-button secondary">
+            <i class="fas fa-drone"></i>
+            View Our Services
+          </a>
+        </div>
       </div>
     </section>
   </div>
 </Layout>
 
 <style>
-  .gallery-item {
-    background: var(--glass-bg);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    overflow: hidden;
-    transition: all 0.3s ease;
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
   }
 
-  .gallery-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  .hero-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  .gallery-image {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .gallery-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+  .hero-stats {
     display: flex;
-    align-items: center;
     justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    gap: 3rem;
+    margin-top: 2rem;
   }
 
-  .gallery-image:hover .gallery-overlay {
-    opacity: 1;
+  .stat-item {
+    text-align: center;
   }
 
-  .gallery-info {
-    padding: 1.5rem;
+  .stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    margin-bottom: 0.5rem;
   }
 
-  .gallery-info h3 {
+  .stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+  }
+
+  .filter-section {
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border-radius: 16px;
+  }
+
+  .filter-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .filter-header h2 {
+    font-size: 1.8rem;
     margin-bottom: 0.5rem;
     color: var(--white);
   }
 
-  .gallery-info p {
-    opacity: 0.8;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+  .filter-header p {
+    color: rgba(255, 255, 255, 0.7);
   }
 
-  .gallery-details {
+  .filter-controls {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-size: 0.8rem;
-    opacity: 0.7;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .gallery-price {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .search-box {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
   }
 
-  .price {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--accent-cyan);
+  .search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  .buy-button {
-    background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue));
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+  .search-box input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    font-size: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .category-filters {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 25px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .buy-button:hover {
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--accent-cyan);
+    color: var(--dark-navy);
+    border-color: var(--accent-cyan);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .load-more-section {
+    text-align: center;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
   }
 
   .category-card {
     text-align: center;
     padding: 2rem;
     border-radius: 12px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.3s ease;
   }
@@ -347,15 +356,22 @@ import Layout from '../components/Layout.astro';
   .category-card:hover {
     transform: translateY(-5px);
     border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .category-icon {
+    font-size: 2.5rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
   }
 
   .category-card h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     color: var(--white);
   }
 
   .category-card p {
-    opacity: 0.8;
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 1rem;
     font-size: 0.9rem;
   }
@@ -369,10 +385,16 @@ import Layout from '../components/Layout.astro';
     font-weight: 600;
   }
 
+  .licensing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
   .license-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
     padding: 2rem;
     text-align: center;
     transition: all 0.3s ease;
@@ -380,6 +402,7 @@ import Layout from '../components/Layout.astro';
 
   .license-card.featured {
     border-color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.1);
     transform: scale(1.05);
   }
 
@@ -396,8 +419,14 @@ import Layout from '../components/Layout.astro';
     margin-bottom: 2rem;
   }
 
+  .license-header i {
+    font-size: 2rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1rem;
+  }
+
   .license-header h3 {
-    margin: 1rem 0 0.5rem 0;
+    margin-bottom: 0.5rem;
     color: var(--white);
   }
 
@@ -415,7 +444,7 @@ import Layout from '../components/Layout.astro';
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .license-features .fa-check {
@@ -426,11 +455,106 @@ import Layout from '../components/Layout.astro';
     color: var(--medium-gray);
   }
 
-  .payment-method {
-    padding: 0.5rem 1rem;
-    background: var(--glass-bg);
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.2);
-    font-size: 0.9rem;
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-stats {
+      gap: 2rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+
+    .filter-controls {
+      align-items: center;
+    }
+
+    .category-filters {
+      justify-content: center;
+    }
+
+    .media-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .licensing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .license-card.featured {
+      transform: none;
+    }
+
+    .license-card.featured:hover {
+      transform: translateY(-5px);
+    }
   }
 </style>
+
+<script>
+  // Media filtering and search functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('media-search');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const mediaGrid = document.getElementById('media-grid');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let displayedItems = 6;
+    
+    // Filter functionality
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.category;
+        filterMedia();
+      });
+    });
+    
+    // Search functionality
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        currentSearch = this.value.toLowerCase();
+        filterMedia();
+      });
+    }
+    
+    // Category card clicks
+    document.querySelectorAll('.category-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const category = this.dataset.category;
+        const filterBtn = document.querySelector(`[data-category="${category}"]`);
+        if (filterBtn) {
+          filterBtn.click();
+          document.querySelector('.filter-section').scrollIntoView({ 
+            behavior: 'smooth' 
+          });
+        }
+      });
+    });
+    
+    function filterMedia() {
+      // In a real implementation, this would filter the actual media cards
+      // For now, we'll just show a loading state
+      console.log('Filtering media:', { currentFilter, currentSearch });
+    }
+    
+    // Load more functionality
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', function() {
+        displayedItems += 6;
+        // In a real implementation, this would load more items from Cloudflare
+        console.log('Loading more items, total:', displayedItems);
+      });
+    }
+  });
+</script>
