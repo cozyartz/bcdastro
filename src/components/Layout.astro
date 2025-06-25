@@ -1,221 +1,53 @@
 ---
-import Layout from '../components/Layout.astro';
-import ServiceCard from '../components/ServiceCard.astro';
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
 ---
 
-<Layout title="Services - Battle Creek Drone">
-  <div class="container">
-    <section class="hero">
-      <div class="subtitle">Professional Drone Services</div>
-      <h1>Our Services</h1>
-      <p>Comprehensive aerial solutions for agriculture, construction, inspections, and more. Licensed and insured pilots delivering precision results.</p>
-    </section>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Professional drone services in Battle Creek, Michigan" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <title>{title}</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <!-- Grid overlay -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Floating shapes -->
+    <div class="floating-shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
 
-    <!-- Main Services Grid -->
-    <section class="services">
-      <ServiceCard 
-        icon="fas fa-seedling"
-        title="Agricultural Solutions"
-        description="Optimize crop management, monitor soil health, and detect potential issues early with our aerial imaging and data analysis services."
-        features={[
-          "Crop health monitoring",
-          "Soil analysis mapping", 
-          "Irrigation planning",
-          "Yield optimization"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-ruler-combined"
-        title="Aerial Measurements"
-        description="Our advanced drone systems provide accurate and detailed measurements for construction, land surveying, and property development projects."
-        features={[
-          "Precision surveying",
-          "Volume calculations",
-          "Topographic mapping",
-          "Progress monitoring"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-cube"
-        title="3D Mapping & Modeling"
-        description="Revolutionary photogrammetry techniques that capture and process aerial imagery to create detailed, three-dimensional models of landscapes and structures."
-        features={[
-          "High-resolution 3D models",
-          "Point cloud generation",
-          "Digital twin creation",
-          "Virtual site tours"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-search"
-        title="Infrastructure Inspections"
-        description="Safer, more efficient, and cost-effective infrastructure assessments using high-resolution cameras and advanced sensors."
-        features={[
-          "Bridge inspections",
-          "Tower assessments",
-          "Roof evaluations",
-          "Safety compliance"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-shield-alt"
-        title="Emergency Response"
-        description="Rapid deployment for emergency situations, search and rescue operations, and disaster assessment with real-time data transmission."
-        features={[
-          "Search & rescue support",
-          "Disaster assessment",
-          "Real-time monitoring",
-          "Emergency mapping"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-video"
-        title="Aerial Photography"
-        description="Professional aerial photography and videography services for real estate, events, marketing, and documentation purposes."
-        features={[
-          "4K video recording",
-          "High-resolution photography",
-          "Real estate marketing",
-          "Event documentation"
-        ]}
-      />
-    </section>
+    <!-- Navigation -->
+    <nav class="nav">
+      <ul class="nav-links">
+        <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="/services" class="nav-link"><i class="fas fa-cogs"></i> Services</a></li>
+        <li><a href="/gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a></li>
+        <li><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="/contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+      </ul>
+    </nav>
 
-    <!-- Additional Services Section -->
-    <section class="content-section glass">
-      <h2 class="section-title">Specialized Services</h2>
-      <p class="section-subtitle">Advanced solutions for specific industry needs</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-industry" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Industrial Inspections</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Comprehensive facility inspections, equipment monitoring, and safety assessments for industrial operations.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Flare stack inspections</li>
-            <li>Tank and vessel assessments</li>
-            <li>Conveyor system monitoring</li>
-            <li>Safety compliance documentation</li>
-          </ul>
-        </div>
-        
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-home" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Real Estate Services</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Stunning aerial photography and video to showcase properties and enhance marketing materials.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Property showcase videos</li>
-            <li>Neighborhood overviews</li>
-            <li>Land development documentation</li>
-            <li>Virtual property tours</li>
-          </ul>
-        </div>
-        
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Data Analytics</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Transform aerial data into actionable insights with advanced processing and analysis capabilities.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Thermal imaging analysis</li>
-            <li>Multispectral data processing</li>
-            <li>Change detection monitoring</li>
-            <li>Custom reporting solutions</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <!-- Main content -->
+    <main>
+      <slot />
+    </main>
 
-    <!-- Technology Section -->
-    <section class="content-section glass">
-      <h2 class="section-title">Our Technology</h2>
-      <p class="section-subtitle">State-of-the-art equipment for superior results</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-camera" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">4K Cameras</h3>
-          <p style="opacity: 0.8;">Ultra-high resolution imaging for detailed documentation and analysis.</p>
-        </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-thermometer-half" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Thermal Sensors</h3>
-          <p style="opacity: 0.8;">Advanced thermal imaging for infrastructure and agricultural monitoring.</p>
-        </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-satellite" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">GPS Precision</h3>
-          <p style="opacity: 0.8;">Centimeter-level accuracy for surveying and mapping applications.</p>
-        </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Real-time Data</h3>
-          <p style="opacity: 0.8;">Live streaming and instant data transmission for immediate insights.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Call to Action -->
-    <!-- Payment & Pricing Section -->
-    <section class="content-section glass">
-      <h2 class="section-title">Payment & Pricing</h2>
-      <p class="section-subtitle">Flexible payment options for your convenience</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="text-align: center; padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-credit-card" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Secure Online Payments</h3>
-          <p style="opacity: 0.8; margin-bottom: 1.5rem;">We accept all major credit cards and digital payments through our secure payment gateway.</p>
-          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
-            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
-              <i class="fab fa-cc-visa"></i> Visa
-            </span>
-            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
-              <i class="fab fa-cc-mastercard"></i> Mastercard
-            </span>
-            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
-              <i class="fab fa-cc-amex"></i> Amex
-            </span>
-            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
-              <i class="fab fa-paypal"></i> PayPal
-            </span>
-          </div>
-          <a href="/contact" class="professional-button">
-            <i class="fas fa-calculator"></i> Get Quote
-          </a>
-        </div>
-        
-        <div style="text-align: center; padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-file-invoice-dollar" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Flexible Billing</h3>
-          <p style="opacity: 0.8; margin-bottom: 1.5rem;">Choose from various payment options to suit your project needs and budget.</p>
-          <ul style="text-align: left; opacity: 0.8; margin-bottom: 1.5rem;">
-            <li style="margin-bottom: 0.5rem;">
-              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
-              Per-project pricing
-            </li>
-            <li style="margin-bottom: 0.5rem;">
-              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
-              Hourly rates available
-            </li>
-            <li style="margin-bottom: 0.5rem;">
-              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
-              Volume discounts
-    <section class="hero">
-      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Get Started?</h2>
-      <p>Contact us today to discuss your project requirements and receive a customized quote.</p>
-      <div class="flex gap-4 justify-center flex-wrap mt-4">
-        <a href="/contact" class="professional-button">
-          <i class="fas fa-envelope"></i> Request Quote
-        </a>
-        <a href="tel:269.425.1770" class="professional-button secondary">
-          <i class="fas fa-phone"></i> Call Now
-        </a>
-      </div>
-    </section>
-  </div>
-</Layout>
+    <style>
+      html {
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+    </style>
+  </body>
+</html>
