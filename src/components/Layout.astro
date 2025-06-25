@@ -4,7 +4,7 @@ export interface Props {
   description?: string;
 }
 
-const { title, description = "Amazing 80s-inspired modern web experience" } = Astro.props;
+const { title, description = "Professional drone services for aerial solutions, inspections, mapping, and agricultural monitoring in Battle Creek and surrounding areas." } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -19,13 +19,18 @@ const { title, description = "Amazing 80s-inspired modern web experience" } = As
     <!-- FontAwesome -->
     <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- Global Styles -->
     <link rel="stylesheet" href="/src/styles/global.css" />
     
     <title>{title}</title>
   </head>
   <body>
-    <!-- Grid overlay for 80s effect -->
+    <!-- Grid overlay for professional effect -->
     <div class="grid-overlay"></div>
     
     <!-- Floating shapes -->
@@ -39,8 +44,8 @@ const { title, description = "Amazing 80s-inspired modern web experience" } = As
     <nav class="nav">
       <ul class="nav-links">
         <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-        <li><a href="/about" class="nav-link"><i class="fas fa-user"></i> About</a></li>
-        <li><a href="/services" class="nav-link"><i class="fas fa-cogs"></i> Services</a></li>
+        <li><a href="/services" class="nav-link"><i class="fas fa-drone"></i> Services</a></li>
+        <li><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
         <li><a href="/contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
       </ul>
     </nav>
