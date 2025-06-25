@@ -3,45 +3,16 @@ import Layout from '../components/Layout.astro';
 import ServiceCard from '../components/ServiceCard.astro';
 ---
 
-<Layout title="Battle Creek Drone - Professional Aerial Solutions">
+<Layout title="Services - Battle Creek Drone">
   <div class="container">
-    <!-- Hero Section -->
     <section class="hero">
-      <div class="subtitle">Aerial Solutions for the Modern World</div>
-      <h1>Battle Creek Drone</h1>
-      <p>Professional drone services delivering efficient, accurate, and cost-effective solutions for various industries. Licensed and insured pilots with cutting-edge technology.</p>
-      <div class="flex gap-4 justify-center flex-wrap">
-        <a href="/services" class="professional-button">
-          <i class="fas fa-drone"></i> View Services
-        </a>
-        <a href="/contact" class="professional-button secondary">
-          <i class="fas fa-phone"></i> Get Quote
-        </a>
-      </div>
+      <div class="subtitle">Professional Drone Services</div>
+      <h1>Our Services</h1>
+      <p>Comprehensive aerial solutions for agriculture, construction, inspections, and more. Licensed and insured pilots delivering precision results.</p>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-      <div class="stat-item">
-        <span class="stat-number">500+</span>
-        <div class="stat-label">Projects Completed</div>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">100%</span>
-        <div class="stat-label">Licensed & Insured</div>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">24/7</span>
-        <div class="stat-label">Emergency Response</div>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">5★</span>
-        <div class="stat-label">Customer Rating</div>
-      </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="services">
+    <!-- Main Services Grid -->
+    <section class="services">
       <ServiceCard 
         icon="fas fa-seedling"
         title="Agricultural Solutions"
@@ -115,42 +86,131 @@ import ServiceCard from '../components/ServiceCard.astro';
       />
     </section>
 
-    <!-- Why Choose Us Section -->
+    <!-- Additional Services Section -->
     <section class="content-section glass">
-      <h2 class="section-title">Why Choose Battle Creek Drone?</h2>
-      <p class="section-subtitle">Professional Excellence in Every Flight</p>
+      <h2 class="section-title">Specialized Services</h2>
+      <p class="section-subtitle">Advanced solutions for specific industry needs</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+          <i class="fas fa-industry" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Industrial Inspections</h3>
+          <p style="opacity: 0.8; margin-bottom: 1rem;">Comprehensive facility inspections, equipment monitoring, and safety assessments for industrial operations.</p>
+          <ul style="text-align: left; opacity: 0.8;">
+            <li>Flare stack inspections</li>
+            <li>Tank and vessel assessments</li>
+            <li>Conveyor system monitoring</li>
+            <li>Safety compliance documentation</li>
+          </ul>
+        </div>
+        
+        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+          <i class="fas fa-home" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Real Estate Services</h3>
+          <p style="opacity: 0.8; margin-bottom: 1rem;">Stunning aerial photography and video to showcase properties and enhance marketing materials.</p>
+          <ul style="text-align: left; opacity: 0.8;">
+            <li>Property showcase videos</li>
+            <li>Neighborhood overviews</li>
+            <li>Land development documentation</li>
+            <li>Virtual property tours</li>
+          </ul>
+        </div>
+        
+        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+          <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Data Analytics</h3>
+          <p style="opacity: 0.8; margin-bottom: 1rem;">Transform aerial data into actionable insights with advanced processing and analysis capabilities.</p>
+          <ul style="text-align: left; opacity: 0.8;">
+            <li>Thermal imaging analysis</li>
+            <li>Multispectral data processing</li>
+            <li>Change detection monitoring</li>
+            <li>Custom reporting solutions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="content-section glass">
+      <h2 class="section-title">Our Technology</h2>
+      <p class="section-subtitle">State-of-the-art equipment for superior results</p>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
         <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-certificate" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Licensed & Insured</h3>
-          <p style="opacity: 0.8;">FAA certified pilots with comprehensive insurance coverage for your peace of mind.</p>
+          <i class="fas fa-camera" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">4K Cameras</h3>
+          <p style="opacity: 0.8;">Ultra-high resolution imaging for detailed documentation and analysis.</p>
         </div>
         <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-rocket" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Cutting-Edge Technology</h3>
-          <p style="opacity: 0.8;">Latest drone technology and sensors for unmatched precision and data quality.</p>
+          <i class="fas fa-thermometer-half" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Thermal Sensors</h3>
+          <p style="opacity: 0.8;">Advanced thermal imaging for infrastructure and agricultural monitoring.</p>
         </div>
         <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-clock" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Fast Turnaround</h3>
-          <p style="opacity: 0.8;">Quick project completion and data delivery to keep your operations on schedule.</p>
+          <i class="fas fa-satellite" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">GPS Precision</h3>
+          <p style="opacity: 0.8;">Centimeter-level accuracy for surveying and mapping applications.</p>
         </div>
         <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-dollar-sign" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Competitive Pricing</h3>
-          <p style="opacity: 0.8;">Cost-effective solutions without compromising on quality or safety standards.</p>
+          <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Real-time Data</h3>
+          <p style="opacity: 0.8;">Live streaming and instant data transmission for immediate insights.</p>
         </div>
       </div>
     </section>
 
     <!-- Call to Action -->
+    <!-- Payment & Pricing Section -->
+    <section class="content-section glass">
+      <h2 class="section-title">Payment & Pricing</h2>
+      <p class="section-subtitle">Flexible payment options for your convenience</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+        <div style="text-align: center; padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+          <i class="fas fa-credit-card" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Secure Online Payments</h3>
+          <p style="opacity: 0.8; margin-bottom: 1.5rem;">We accept all major credit cards and digital payments through our secure payment gateway.</p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
+              <i class="fab fa-cc-visa"></i> Visa
+            </span>
+            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
+              <i class="fab fa-cc-mastercard"></i> Mastercard
+            </span>
+            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
+              <i class="fab fa-cc-amex"></i> Amex
+            </span>
+            <span style="padding: 0.5rem 1rem; background: var(--glass-bg); border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); font-size: 0.9rem;">
+              <i class="fab fa-paypal"></i> PayPal
+            </span>
+          </div>
+          <a href="/contact" class="professional-button">
+            <i class="fas fa-calculator"></i> Get Quote
+          </a>
+        </div>
+        
+        <div style="text-align: center; padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
+          <i class="fas fa-file-invoice-dollar" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 style="margin-bottom: 1rem;">Flexible Billing</h3>
+          <p style="opacity: 0.8; margin-bottom: 1.5rem;">Choose from various payment options to suit your project needs and budget.</p>
+          <ul style="text-align: left; opacity: 0.8; margin-bottom: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;">
+              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
+              Per-project pricing
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
+              Hourly rates available
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+              <i class="fas fa-check" style="color: var(--accent-cyan); margin-right: 0.5rem;"></i>
+              Volume discounts
     <section class="hero">
-      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Elevate Your Project?</h2>
-      <p>Contact Battle Creek Drone today for a customized solution that meets your specific needs and budget.</p>
+      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Get Started?</h2>
+      <p>Contact us today to discuss your project requirements and receive a customized quote.</p>
       <div class="flex gap-4 justify-center flex-wrap mt-4">
         <a href="/contact" class="professional-button">
-          <i class="fas fa-envelope"></i> Get Started
+          <i class="fas fa-envelope"></i> Request Quote
         </a>
         <a href="tel:269.425.1770" class="professional-button secondary">
           <i class="fas fa-phone"></i> Call Now
@@ -159,9 +219,3 @@ import ServiceCard from '../components/ServiceCard.astro';
     </section>
   </div>
 </Layout>
-
-<style>
-  #services {
-    scroll-margin-top: 2rem;
-  }
-</style>
