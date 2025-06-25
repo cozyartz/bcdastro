@@ -39,7 +39,8 @@ export default function Dashboard() {
           avatar_url: currentUser.user_metadata?.avatar_url,
           created_at: currentUser.created_at || '',
           is_verified: currentUser.email_confirmed_at ? true : false,
-          subscription_tier: 'free'
+          subscription_tier: 'free',
+          is_admin: currentUser.is_admin || false
         });
       }
     } catch (error) {
@@ -186,6 +187,11 @@ export default function Dashboard() {
           <div className="user-details">
             <h2>Welcome back, {user.full_name || user.email}</h2>
             <p className="user-email">{user.email}</p>
+            {user.is_admin && (
+              <span className="subscription-badge" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5', marginRight: '0.5rem' }}>
+                ADMIN
+              </span>
+            )}
             <span className={`subscription-badge ${user.subscription_tier}`}>
               {user.subscription_tier.toUpperCase()}
             </span>

@@ -36,6 +36,12 @@ const { title } = Astro.props;
         <li><a href="/gallery" class="nav-link"><i class="fas fa-images"></i> Gallery</a></li>
         <li><a href="/about" class="nav-link"><i class="fas fa-info-circle"></i> About</a></li>
         <li><a href="/contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
+        
+        <!-- Auth-related navigation items will be inserted here by JavaScript -->
+        <li id="auth-nav-items"></li>
+        
+        <!-- Auth-related navigation items will be inserted here by JavaScript -->
+        <li id="auth-nav-items"></li>
       </ul>
     </nav>
 
@@ -44,10 +50,279 @@ const { title } = Astro.props;
       <slot />
     </main>
 
+    <!-- Auth Modal Container -->
+    <div id="auth-modal-container"></div>
+    <!-- Auth Modal Container -->
+    <div id="auth-modal-container"></div>
+
     <style>
       html {
         font-family: 'Inter', system-ui, sans-serif;
       }
     </style>
+
+    <script>
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import AuthModal from '../components/AuthModal.tsx';
+      import { AuthService } from '../lib/supabase.ts';
+
+      // Global state for auth
+      let currentUser = null;
+      let authModalRoot = null;
+      let showAuthModal = false;
+      let authMode = 'signin';
+
+      // Initialize auth modal
+      const initAuthModal = () => {
+        const container = document.getElementById('auth-modal-container');
+        if (container && !authModalRoot) {
+          authModalRoot = createRoot(container);
+        }
+      };
+
+      // Render auth modal
+      const renderAuthModal = () => {
+        if (authModalRoot) {
+          authModalRoot.render(
+            React.createElement(AuthModal, {
+              isOpen: showAuthModal,
+              onClose: () => {
+                showAuthModal = false;
+                renderAuthModal();
+              },
+              mode: authMode,
+              onModeChange: (mode) => {
+                authMode = mode;
+                renderAuthModal();
+              }
+            })
+          );
+        }
+      };
+
+      // Update navigation based on auth state
+      const updateNavigation = () => {
+        const authNavItems = document.getElementById('auth-nav-items');
+        if (!authNavItems) return;
+
+        if (currentUser) {
+          authNavItems.innerHTML = `
+            <a href="/dashboard" class="nav-link">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <button class="nav-link" id="sign-out-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+          `;
+          
+          // Add sign out handler
+          const signOutBtn = document.getElementById('sign-out-btn');
+          if (signOutBtn) {
+            signOutBtn.addEventListener('click', handleSignOut);
+          }
+        } else {
+          authNavItems.innerHTML = `
+            <button class="nav-link" id="sign-in-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+            <button class="nav-link" id="sign-up-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+          `;
+          
+          // Add auth handlers
+          const signInBtn = document.getElementById('sign-in-btn');
+          const signUpBtn = document.getElementById('sign-up-btn');
+          
+          if (signInBtn) {
+            signInBtn.addEventListener('click', () => {
+              authMode = 'signin';
+              showAuthModal = true;
+              renderAuthModal();
+            });
+          }
+          
+          if (signUpBtn) {
+            signUpBtn.addEventListener('click', () => {
+              authMode = 'signup';
+              showAuthModal = true;
+              renderAuthModal();
+            });
+          }
+        }
+      };
+
+      // Handle sign out
+      const handleSignOut = async () => {
+        try {
+          await AuthService.signOut();
+          currentUser = null;
+          updateNavigation();
+          
+          // Redirect to home if on dashboard
+          if (window.location.pathname === '/dashboard') {
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      };
+
+      // Check current user on page load
+      const checkCurrentUser = async () => {
+        try {
+          currentUser = await AuthService.getCurrentUser();
+          updateNavigation();
+        } catch (error) {
+          console.error('Error checking user:', error);
+          updateNavigation();
+        }
+      };
+
+      // Initialize everything when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        initAuthModal();
+        checkCurrentUser();
+        renderAuthModal();
+      });
+
+      // Listen for auth state changes
+      window.addEventListener('authStateChanged', () => {
+        checkCurrentUser();
+      });
+    </script>
+
+    <script>
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import AuthModal from '../components/AuthModal.tsx';
+      import { AuthService } from '../lib/supabase.ts';
+
+      // Global state for auth
+      let currentUser = null;
+      let authModalRoot = null;
+      let showAuthModal = false;
+      let authMode = 'signin';
+
+      // Initialize auth modal
+      const initAuthModal = () => {
+        const container = document.getElementById('auth-modal-container');
+        if (container && !authModalRoot) {
+          authModalRoot = createRoot(container);
+        }
+      };
+
+      // Render auth modal
+      const renderAuthModal = () => {
+        if (authModalRoot) {
+          authModalRoot.render(
+            React.createElement(AuthModal, {
+              isOpen: showAuthModal,
+              onClose: () => {
+                showAuthModal = false;
+                renderAuthModal();
+              },
+              mode: authMode,
+              onModeChange: (mode) => {
+                authMode = mode;
+                renderAuthModal();
+              }
+            })
+          );
+        }
+      };
+
+      // Update navigation based on auth state
+      const updateNavigation = () => {
+        const authNavItems = document.getElementById('auth-nav-items');
+        if (!authNavItems) return;
+
+        if (currentUser) {
+          authNavItems.innerHTML = `
+            <a href="/dashboard" class="nav-link">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <button class="nav-link" id="sign-out-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+          `;
+          
+          // Add sign out handler
+          const signOutBtn = document.getElementById('sign-out-btn');
+          if (signOutBtn) {
+            signOutBtn.addEventListener('click', handleSignOut);
+          }
+        } else {
+          authNavItems.innerHTML = `
+            <button class="nav-link" id="sign-in-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+            <button class="nav-link" id="sign-up-btn" style="border: none; background: none; cursor: pointer;">
+              <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+          `;
+          
+          // Add auth handlers
+          const signInBtn = document.getElementById('sign-in-btn');
+          const signUpBtn = document.getElementById('sign-up-btn');
+          
+          if (signInBtn) {
+            signInBtn.addEventListener('click', () => {
+              authMode = 'signin';
+              showAuthModal = true;
+              renderAuthModal();
+            });
+          }
+          
+          if (signUpBtn) {
+            signUpBtn.addEventListener('click', () => {
+              authMode = 'signup';
+              showAuthModal = true;
+              renderAuthModal();
+            });
+          }
+        }
+      };
+
+      // Handle sign out
+      const handleSignOut = async () => {
+        try {
+          await AuthService.signOut();
+          currentUser = null;
+          updateNavigation();
+          
+          // Redirect to home if on dashboard
+          if (window.location.pathname === '/dashboard') {
+            window.location.href = '/';
+          }
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      };
+
+      // Check current user on page load
+      const checkCurrentUser = async () => {
+        try {
+          currentUser = await AuthService.getCurrentUser();
+          updateNavigation();
+        } catch (error) {
+          console.error('Error checking user:', error);
+          updateNavigation();
+        }
+      };
+
+      // Initialize everything when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        initAuthModal();
+        checkCurrentUser();
+        renderAuthModal();
+      });
+
+      // Listen for auth state changes
+      window.addEventListener('authStateChanged', () => {
+        checkCurrentUser();
+      });
+    </script>
   </body>
 </html>

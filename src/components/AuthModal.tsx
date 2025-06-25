@@ -31,6 +31,12 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         window.location.reload();
       }
       onClose();
+      
+      // Dispatch custom event to update navigation
+      window.dispatchEvent(new CustomEvent('authStateChanged'));
+      
+      // Dispatch custom event to update navigation
+      window.dispatchEvent(new CustomEvent('authStateChanged'));
     } catch (err: any) {
       setError(err.message);
     } finally {

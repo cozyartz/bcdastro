@@ -1,208 +1,646 @@
-import { createClient } from '@supabase/supabase-js';
+import React, { useState, useEffect } from 'react';
+import { AuthService, MediaService, User, MediaAsset } from '../lib/supabase';
+import AuthModal from './AuthModal';
+import UploadModal from './UploadModal';
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY;
+export default function Dashboard() {
+  const [user, setUser] = useState<User | null>(null);
+  const [userMedia, setUserMedia] = useState<MediaAsset[]>([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalMedia: 0,
+    totalRevenue: 0,
+    totalDownloads: 0,
+    pendingApproval: 0
+  });
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  useEffect(() => {
+    checkUser();
+  }, []);
 
-export interface User {
-  id: string;
-  email: string;
-  full_name?: string;
-  avatar_url?: string;
-  created_at: string;
-  is_verified: boolean;
-  subscription_tier: 'free' | 'pro' | 'enterprise';
-}
+  useEffect(() => {
+    if (user) {
+      loadUserMedia();
+    }
+  }, [user]);
 
-export interface MediaAsset {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  type: 'video' | 'image';
-  category: string;
-  cloudflare_id: string;
-  thumbnail_url?: string;
-  duration?: string;
-  resolution: string;
-  file_size: string;
-  tags: string[];
-  individual_price: number;
-  package_price?: number;
-  exclusive_price?: number;
-  is_exclusive: boolean;
-  exclusive_buyer_id?: string;
-  location?: string;
-  property_type?: string;
-  upload_date: string;
-  status: 'pending' | 'approved' | 'rejected';
-  downloads: number;
-  revenue: number;
-}
-
-export interface MediaPackage {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string;
-  property_name: string;
-  property_type: string;
-  location: string;
-  media_assets: string[]; // Array of media asset IDs
-  package_price: number;
-  individual_total: number;
-  savings_amount: number;
-  is_exclusive: boolean;
-  exclusive_price?: number;
-  exclusive_buyer_id?: string;
-  created_at: string;
-  status: 'active' | 'sold' | 'exclusive';
-}
-
-export interface Purchase {
-  id: string;
-  buyer_email: string;
-  media_asset_id?: string;
-  package_id?: string;
-  license_type: 'standard' | 'commercial' | 'exclusive';
-  price_paid: number;
-  purchase_date: string;
-  download_count: number;
-  max_downloads: number;
-}
-
-export class AuthService {
-  static async signUp(email: string, password: string, fullName: string) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
         }
       }
-    });
-    return { data, error };
-  }
-
-  static async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    return { data, error };
-  }
-
-  static async signOut() {
-    const { error } = await supabase.auth.signOut();
-    return { error };
-  }
-
-  static async getCurrentUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-    return user;
-  }
-
-  static async updateProfile(updates: Partial<User>) {
-    const { data, error } = await supabase.auth.updateUser({
-      data: updates
-    });
-    return { data, error };
-  }
-}
-
-export class MediaService {
-  static async uploadMedia(mediaData: Omit<MediaAsset, 'id' | 'upload_date' | 'status' | 'downloads' | 'revenue'>) {
-    const { data, error } = await supabase
-      .from('media_assets')
-      .insert([{
-        ...mediaData,
-        upload_date: new Date().toISOString(),
-        status: 'pending',
-        downloads: 0,
-        revenue: 0
-      }])
-      .select()
-      .single();
-    
-    return { data, error };
-  }
-
-  static async getUserMedia(userId: string) {
-    const { data, error } = await supabase
-      .from('media_assets')
-      .select('*')
-      .eq('user_id', userId)
-      .order('upload_date', { ascending: false });
-    
-    return { data, error };
-  }
-
-  static async getPublicMedia(category?: string, limit = 20, offset = 0) {
-    let query = supabase
-      .from('media_assets')
-      .select('*')
-      .eq('status', 'approved')
-      .eq('is_exclusive', false);
-    
-    if (category) {
-      query = query.eq('category', category);
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+        setUser({
+          id: currentUser.id,
+          email: currentUser.email || '',
+          full_name: currentUser.user_metadata?.full_name || '',
+          avatar_url: currentUser.user_metadata?.avatar_url,
+          created_at: currentUser.created_at || '',
+          is_verified: currentUser.email_confirmed_at ? true : false,
+          subscription_tier: 'free',
+          is_admin: false
+        });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        // Fetch the full user profile from our database
+        const { data: userData, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', currentUser.id)
+          .single();
+        
+        if (error) {
+          console.error('Error fetching user data:', error);
+          // Fallback to auth user data
+          setUser({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            full_name: currentUser.user_metadata?.full_name || '',
+            avatar_url: currentUser.user_metadata?.avatar_url,
+            created_at: currentUser.created_at || '',
+            is_verified: currentUser.email_confirmed_at ? true : false,
+            subscription_tier: 'free',
+            is_admin: false
+          });
+        } else {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            full_name: userData.full_name,
+            avatar_url: userData.avatar_url,
+            created_at: userData.created_at,
+            is_verified: userData.is_verified,
+            subscription_tier: userData.subscription_tier,
+            is_admin: userData.is_admin || false
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkUser = async () => {
+    try {
+        });
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadUserMedia = async () => {
+    if (!user) return;
     
-    const { data, error } = await query
-      .order('upload_date', { ascending: false })
-      .range(offset, offset + limit - 1);
-    
-    return { data, error };
+    try {
+      const { data, error } = await MediaService.getUserMedia(user.id);
+      if (error) throw error;
+      
+      setUserMedia(data || []);
+      
+      // Calculate stats
+      const totalMedia = data?.length || 0;
+      const totalRevenue = data?.reduce((sum, item) => sum + item.revenue, 0) || 0;
+      const totalDownloads = data?.reduce((sum, item) => sum + item.downloads, 0) || 0;
+      const pendingApproval = data?.filter(item => item.status === 'pending').length || 0;
+      
+      setStats({
+        totalMedia,
+        totalRevenue,
+        totalDownloads,
+        pendingApproval
+      });
+    } catch (error) {
+      console.error('Error loading user media:', error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await AuthService.signOut();
+      setUser(null);
+      setUserMedia([]);
+      setStats({ totalMedia: 0, totalRevenue: 0, totalDownloads: 0, pendingApproval: 0 });
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved': return '#10b981';
+      case 'pending': return '#f59e0b';
+      case 'rejected': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner">
+          <i className="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>Loading dashboard...</p>
+      </div>
+    );
   }
 
-  static async createPackage(packageData: Omit<MediaPackage, 'id' | 'created_at'>) {
-    const { data, error } = await supabase
-      .from('media_packages')
-      .insert([{
-        ...packageData,
-        created_at: new Date().toISOString()
-      }])
-      .select()
-      .single();
-    
-    return { data, error };
+  if (!user) {
+    return (
+      <div className="auth-container">
+        <div className="auth-hero">
+          <h1>Creator Dashboard</h1>
+          <p>Upload and manage your aerial media content. Earn revenue from your professional drone photography and videography.</p>
+          
+          <div className="auth-benefits">
+            <div className="benefit-item">
+              <i className="fas fa-cloud-upload-alt"></i>
+              <h3>Upload Your Media</h3>
+              <p>Share your professional aerial content with potential buyers</p>
+            </div>
+            <div className="benefit-item">
+              <i className="fas fa-dollar-sign"></i>
+              <h3>Flexible Pricing</h3>
+              <p>Set individual, package, and exclusive pricing for maximum revenue</p>
+            </div>
+            <div className="benefit-item">
+              <i className="fas fa-chart-line"></i>
+              <h3>Track Performance</h3>
+              <p>Monitor downloads, revenue, and engagement with detailed analytics</p>
+            </div>
+          </div>
+          
+          <div className="auth-actions">
+            <button 
+              className="professional-button"
+              onClick={() => {
+                setAuthMode('signup');
+                setShowAuthModal(true);
+              }}
+            >
+              <i className="fas fa-user-plus"></i>
+              Create Account
+            </button>
+            <button 
+              className="professional-button secondary"
+              onClick={() => {
+                setAuthMode('signin');
+                setShowAuthModal(true);
+              }}
+            >
+              <i className="fas fa-sign-in-alt"></i>
+              Sign In
+            </button>
+          </div>
+        </div>
+
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          mode={authMode}
+          onModeChange={setAuthMode}
+        />
+      </div>
+    );
   }
 
-  static async getUserPackages(userId: string) {
-    const { data, error } = await supabase
-      .from('media_packages')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
-    
-    return { data, error };
-  }
-}
+  return (
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <div className="user-info">
+          <div className="user-avatar">
+            {user.avatar_url ? (
+              <img src={user.avatar_url} alt={user.full_name} />
+            ) : (
+              <i className="fas fa-user"></i>
+            )}
+          </div>
+          <div className="user-details">
+            <h2>Welcome back, {user.full_name || user.email}</h2>
+            <p className="user-email">{user.email}</p>
+            <span className={`subscription-badge ${user.subscription_tier}`}>
+              {user.subscription_tier.toUpperCase()}
+            </span>
+          </div>
+        </div>
+        
+        <div className="header-actions">
+          <button 
+            className="professional-button"
+            onClick={() => setShowUploadModal(true)}
+          >
+            <i className="fas fa-plus"></i>
+            Upload Media
+          </button>
+          <button 
+            className="professional-button secondary"
+            onClick={handleSignOut}
+          >
+            <i className="fas fa-sign-out-alt"></i>
+            Sign Out
+          </button>
+        </div>
+      </div>
 
-export class PurchaseService {
-  static async createPurchase(purchaseData: Omit<Purchase, 'id' | 'purchase_date' | 'download_count'>) {
-    const { data, error } = await supabase
-      .from('purchases')
-      .insert([{
-        ...purchaseData,
-        purchase_date: new Date().toISOString(),
-        download_count: 0
-      }])
-      .select()
-      .single();
-    
-    return { data, error };
-  }
+      <div className="dashboard-stats">
+        <div className="stat-card">
+          <div className="stat-icon">
+            <i className="fas fa-images"></i>
+          </div>
+          <div className="stat-content">
+            <h3>{stats.totalMedia}</h3>
+            <p>Total Media</p>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon">
+            <i className="fas fa-dollar-sign"></i>
+          </div>
+          <div className="stat-content">
+            <h3>{formatCurrency(stats.totalRevenue)}</h3>
+            <p>Total Revenue</p>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon">
+            <i className="fas fa-download"></i>
+          </div>
+          <div className="stat-content">
+            <h3>{stats.totalDownloads}</h3>
+            <p>Total Downloads</p>
+          </div>
+        </div>
+        
+        <div className="stat-card">
+          <div className="stat-icon">
+            <i className="fas fa-clock"></i>
+          </div>
+          <div className="stat-content">
+            <h3>{stats.pendingApproval}</h3>
+            <p>Pending Approval</p>
+          </div>
+        </div>
+      </div>
 
-  static async getUserPurchases(userEmail: string) {
-    const { data, error } = await supabase
-      .from('purchases')
-      .select('*')
-      .eq('buyer_email', userEmail)
-      .order('purchase_date', { ascending: false });
-    
-    return { data, error };
-  }
+      <div className="dashboard-content">
+        <div className="content-header">
+          <h2>Your Media Library</h2>
+          <p>Manage your uploaded content and track performance</p>
+        </div>
+
+        {userMedia.length === 0 ? (
+          <div className="empty-state">
+            <i className="fas fa-cloud-upload-alt"></i>
+            <h3>No media uploaded yet</h3>
+            <p>Start by uploading your first aerial photo or video to begin earning revenue.</p>
+            <button 
+              className="professional-button"
+              onClick={() => setShowUploadModal(true)}
+            >
+              <i className="fas fa-plus"></i>
+              Upload Your First Media
+            </button>
+          </div>
+        ) : (
+          <div className="media-grid">
+            {userMedia.map(media => (
+              <div key={media.id} className="media-item glass">
+                <div className="media-preview">
+                  {media.thumbnail_url ? (
+                    <img src={media.thumbnail_url} alt={media.title} />
+                  ) : (
+                    <div className="placeholder-thumbnail">
+                      <i className={media.type === 'video' ? 'fas fa-video' : 'fas fa-image'}></i>
+                    </div>
+                  )}
+                  <div className="media-type-badge">
+                    <i className={media.type === 'video' ? 'fas fa-video' : 'fas fa-camera'}></i>
+                    {media.type}
+                  </div>
+                </div>
+                
+                <div className="media-info">
+                  <h3>{media.title}</h3>
+                  <p className="media-description">{media.description}</p>
+                  
+                  <div className="media-meta">
+                    <span className="category">{media.category}</span>
+                    <span 
+                      className="status"
+                      style={{ color: getStatusColor(media.status) }}
+                    >
+                      {media.status}
+                    </span>
+                  </div>
+                  
+                  <div className="pricing-info">
+                    <div className="price-item">
+                      <span className="price-label">Individual:</span>
+                      <span className="price-value">{formatCurrency(media.individual_price)}</span>
+                    </div>
+                    {media.package_price && (
+                      <div className="price-item">
+                        <span className="price-label">Package:</span>
+                        <span className="price-value">{formatCurrency(media.package_price)}</span>
+                      </div>
+                    )}
+                    {media.exclusive_price && (
+                      <div className="price-item">
+                        <span className="price-label">Exclusive:</span>
+                        <span className="price-value">{formatCurrency(media.exclusive_price)}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="media-stats">
+                    <div className="stat">
+                      <i className="fas fa-download"></i>
+                      <span>{media.downloads} downloads</span>
+                    </div>
+                    <div className="stat">
+                      <i className="fas fa-dollar-sign"></i>
+                      <span>{formatCurrency(media.revenue)} earned</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <UploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        userId={user.id}
+      />
+    </div>
+  );
 }
