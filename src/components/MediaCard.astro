@@ -1,0 +1,56 @@
+@@ .. @@
+ ---
+ import { cloudflareService } from '../lib/cloudflare';
+ 
+ interface Props {
+   id: string;
+   title: string;
+   description: string;
+   type: 'image' | 'video';
+   cloudflareId: string;
+   thumbnailUrl?: string;
+   price: number;
+   category: string;
+   tags: string[];
+ }
+
+-const { id, title, description, type, price, category, tags } = Astro.props;
++const { id, title, description, type, cloudflareId, thumbnailUrl, price, category, tags } = Astro.props;
+
++// Generate Cloudflare URLs
++const mediaUrl = type === 'video' 
++  ? cloudflareService.getStreamUrl(cloudflareId)
++  : cloudflareService.getImageUrl(cloudflareId);
++
++const displayThumbnail = thumbnailUrl || 
++  (type === 'video' ? cloudflareService.getThumbnailUrl(cloudflareId) : mediaUrl);
+ ---
+
+ <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+   <div class="relative aspect-video bg-gray-200 dark:bg-gray-700">
+     {type === 'video' ? (
+-      <video 
+-        class="w-full h-full object-cover"
+-        poster="/api/placeholder/400/225"
+-        preload="metadata"
+-      >
+-        <source src="/api/placeholder/400/225" type="video/mp4" />
+-        Your browser does not support the video tag.
+-      </video>
++      <iframe
++        src={mediaUrl}
++        class="w-full h-full object-cover media-protected"
++        allow="autoplay; encrypted-media"
++        allowfullscreen
++        title={title}
++      ></iframe>
+     ) : (
+       <img 
+-        src="/api/placeholder/400/225" 
++        src={mediaUrl}
+         alt={title}
+-        class="w-full h-full object-cover"
++        class="w-full h-full object-cover media-protected"
+         loading="lazy"
+       />
+     )}

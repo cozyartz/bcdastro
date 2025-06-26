@@ -1,0 +1,73 @@
+@@ .. @@
+ /* Responsive Design */
+ @media (max-width: 768px) {
+   .container {
+     padding: 0 1rem;
+   }
+ }
++
++/* Media Protection Styles */
++.media-protected {
++  -webkit-user-select: none;
++  -moz-user-select: none;
++  -ms-user-select: none;
++  user-select: none;
++  -webkit-user-drag: none;
++  -khtml-user-drag: none;
++  -moz-user-drag: none;
++  -o-user-drag: none;
++  user-drag: none;
++  pointer-events: auto;
++}
++
++.media-protected::-webkit-media-controls {
++  -webkit-appearance: none;
++  display: none !important;
++}
++
++.media-protected::-webkit-media-controls-panel {
++  display: none !important;
++  -webkit-appearance: none;
++}
++
++/* Disable right-click context menu on media elements */
++.media-protected {
++  -webkit-touch-callout: none;
++  -webkit-user-select: none;
++  -khtml-user-select: none;
++  -moz-user-select: none;
++  -ms-user-select: none;
++  user-select: none;
++}
++
++/* Prevent drag and drop */
++.media-protected {
++  -webkit-user-drag: none;
++  -khtml-user-drag: none;
++  -moz-user-drag: none;
++  -o-user-drag: none;
++  user-drag: none;
++}
++
++/* Additional protection for images */
++img.media-protected {
++  -webkit-touch-callout: none;
++  -webkit-user-select: none;
++  -khtml-user-select: none;
++  -moz-user-select: none;
++  -ms-user-select: none;
++  user-select: none;
++  -webkit-user-drag: none;
++  -khtml-user-drag: none;
++  -moz-user-drag: none;
++  -o-user-drag: none;
++  user-drag: none;
++}
++
++/* Disable context menu on media gallery */
++.media-gallery .media-protected {
++  -webkit-context-menu: none;
++  -moz-context-menu: none;
++  -o-context-menu: none;
++  context-menu: none;
++}

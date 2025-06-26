@@ -1,0 +1,76 @@
+@@ .. @@
+ ---
+ import Layout from '../layouts/Layout.astro';
+ import MediaCard from '../components/MediaCard.astro';
++import PackageCard from '../components/PackageCard.astro';
+ import { mediaService, packageService } from '../lib/supabase';
+
+ // Fetch approved media and active packages
+ const [mediaAssets, mediaPackages] = await Promise.all([
+   mediaService.getApprovedMedia(),
+   packageService.getActivePackages()
+ ]);
+ ---
+
+ <Layout title="Media Gallery" description="Browse our collection of professional drone footage and photography">
+   <main class="container mx-auto px-4 py-8">
+     <div class="text-center mb-12">
+       <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+         Media Gallery
+       </h1>
+       <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+         Discover stunning aerial photography and videography captured by our professional drone pilots
+       </p>
+     </div>
+
++    <!-- Media Packages Section -->
++    {mediaPackages.length > 0 && (
++      <section class="mb-16">
++        <div class="flex items-center justify-between mb-8">
++          <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
++            Featured Packages
++          </h2>
++          <span class="text-sm text-gray-500 dark:text-gray-400">
++            {mediaPackages.length} packages available
++          </span>
++        </div>
++        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
++          {mediaPackages.map((pkg) => (
++            <PackageCard
++              id={pkg.id}
++              title={pkg.title}
++              description={pkg.description}
++              propertyName={pkg.property_name}
++              propertyType={pkg.property_type}
++              location={pkg.location}
++              packagePrice={pkg.package_price}
++              individualTotal={pkg.individual_total}
++              savingsAmount={pkg.savings_amount}
++              imageCount={pkg.imageCount}
++              videoCount={pkg.videoCount}
++              createdAt={pkg.created_at}
++            />
++          ))}
++        </div>
++      </section>
++    )}
+
+     <!-- Filter and Search Section -->
+     <div class="mb-8">
+       <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+@@ .. @@
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+           {mediaAssets.map((asset) => (
+             <MediaCard
+               id={asset.id}
+               title={asset.title}
+               description={asset.description}
+               type={asset.type}
++              cloudflareId={asset.cloudflare_id}
++              thumbnailUrl={asset.thumbnail_url}
+               price={asset.individual_price}
+               category={asset.category}
+               tags={asset.tags || []}
+             />
+           ))}
+         </div>
