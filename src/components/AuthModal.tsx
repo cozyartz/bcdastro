@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AuthService } from '../lib/supabase';
+import { AuthService, PilotCertService } from '../lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,8 +12,27 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [pilotCertNumber, setPilotCertNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleOAuthSignIn = async (provider: 'github' | 'google') => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = provider === 'github' 
+        ? await AuthService.signInWithGitHub()
+        : await AuthService.signInWithGoogle();
+      
+      if (error) throw error;
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +41,31 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
     try {
       if (mode === 'signup') {
-        const { error } = await AuthService.signUp(email, password, fullName);
+        // Validate pilot certificate first
+        if (pilotCertNumber) {
+          const { data: validation, error: validationError } = await PilotCertService.validateCertificate(pilotCertNumber, email);
+          
+          if (validationError) {
+            throw new Error(`Certificate validation failed: ${validationError.message}`);
+          }
+          
+          if (!validation?.validation?.isValid) {
+            throw new Error(`Invalid pilot certificate number. Please check your FAA Part 107 certificate number.`);
+          }
+          
+          if (validation.validation.confidence < 0.5) {
+            const proceed = confirm(`Certificate validation returned low confidence (${Math.round(validation.validation.confidence * 100)}%). Do you want to proceed anyway?`);
+            if (!proceed) {
+              return;
+            }
+          }
+        }
+        
+        const { error } = await AuthService.signUp(email, password, fullName, pilotCertNumber);
         if (error) throw error;
-        alert('Check your email for the confirmation link!');
+        
+        setError('');
+        alert('Account created successfully! Please check your email for a verification link to complete your registration.');
       } else {
         const { error } = await AuthService.signIn(email, password);
         if (error) throw error;
@@ -56,6 +97,31 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
           </button>
         </div>
 
+        <div className="oauth-buttons">
+          <button
+            type="button"
+            className="oauth-btn github-btn"
+            onClick={() => handleOAuthSignIn('github')}
+            disabled={loading}
+          >
+            <i className="fab fa-github"></i>
+            Continue with GitHub
+          </button>
+          <button
+            type="button"
+            className="oauth-btn google-btn"
+            onClick={() => handleOAuthSignIn('google')}
+            disabled={loading}
+          >
+            <i className="fab fa-google"></i>
+            Continue with Google
+          </button>
+        </div>
+
+        <div className="divider">
+          <span>or</span>
+        </div>
+
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'signup' && (
             <div className="form-group">
@@ -69,6 +135,22 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 placeholder="Your full name"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && (
+            <div className="form-group">
+              <label htmlFor="pilotCertNumber">
+                <i className="fas fa-id-card"></i> Part 107 Pilot Certificate Number
+              </label>
+              <input
+                type="text"
+                id="pilotCertNumber"
+                value={pilotCertNumber}
+                onChange={(e) => setPilotCertNumber(e.target.value)}
+                required
+                placeholder="Your FAA Part 107 certificate number"
               />
             </div>
           )}

@@ -13,6 +13,9 @@ database_id = "de860f84-811d-4f7a-8ed9-f1c04bb43552"
 binding = "KV_NAMESPACE"
 id = "0b2f870976b14e558f6467ca0cb440b0"
 
+[ai]
+binding = "AI"
+
 [vars]
 NETWORK_ID = "base-sepolia"
 SITE_URL = "http://localhost:4321" 

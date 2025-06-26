@@ -107,13 +107,15 @@ export interface CryptoPayment {
 
 // Authentication Service
 export const AuthService = {
-  async signUp(email: string, password: string, fullName?: string) {
+  async signUp(email: string, password: string, fullName?: string, pilotCertNumber?: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/verify-email`,
         data: {
           full_name: fullName,
+          pilot_cert_number: pilotCertNumber,
         },
       },
     });
@@ -140,6 +142,46 @@ export const AuthService = {
 
   async resetPassword(email: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    return { data, error };
+  },
+
+  async signInWithGitHub() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+    return { data, error };
+  },
+
+  async signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+    return { data, error };
+  },
+
+  async resendVerificationEmail(email: string) {
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/verify-email`,
+      },
+    });
+    return { data, error };
+  },
+
+  async verifyOTP(email: string, token: string) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
     return { data, error };
   },
 };
@@ -401,5 +443,49 @@ export const CryptoPaymentService = {
   async cleanupExpiredPayments() {
     const { error } = await supabase.rpc('cleanup_expired_crypto_payments');
     return { error };
+  },
+};
+
+// Pilot Certificate Validation Service
+export const PilotCertService = {
+  async validateCertificate(certificationNumber: string, userEmail: string) {
+    try {
+      const response = await fetch('/api/verify-pilot-cert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          certificationNumber,
+          userEmail,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Validation failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return { data: result, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
+  },
+
+  async getCachedValidation(certificationNumber: string) {
+    try {
+      const response = await fetch(`/api/verify-pilot-cert?cert=${encodeURIComponent(certificationNumber)}`, {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        return { data: null, error: null };
+      }
+
+      const result = await response.json();
+      return { data: result, error: null };
+    } catch (error: any) {
+      return { data: null, error: { message: error.message } };
+    }
   },
 };

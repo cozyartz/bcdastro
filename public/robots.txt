@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://battlecreekdrone.com/sitemap.xml
+
+# Disallow sensitive areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /_astro/
+Disallow: /functions/
+
+# Allow important pages
+Allow: /services/
+Allow: /gallery/
+Allow: /portfolio/
+Allow: /contact/
+Allow: /about/
+
+# Crawl delay for politeness
+Crawl-delay: 1

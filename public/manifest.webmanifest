@@ -1,0 +1,75 @@
+{
+  "name": "Battle Creek Drone - BCDAstro",
+  "short_name": "BCDAstro",
+  "description": "Professional drone videography and photography services specializing in real estate, commercial, and aerial media production.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e40af",
+  "orientation": "portrait-primary",
+  "categories": ["photography", "business", "media"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/meta/preview.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/meta/preview.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Battle Creek Drone Services"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Gallery",
+      "short_name": "Gallery",
+      "description": "View our drone photography and videography gallery",
+      "url": "/gallery",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "short_name": "Services",
+      "description": "View our professional drone services",
+      "url": "/services",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "short_name": "Contact",
+      "description": "Get in touch for your drone service needs",
+      "url": "/contact",
+      "icons": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
