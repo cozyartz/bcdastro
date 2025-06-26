@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
 import { getSession } from '../../lib/auth';
 import { initializeAgent } from '../../lib/agentkit';
-import { crypto } from 'crypto';
 
 interface ChargeRequest {
-  local_price: { amount: string; currency: string };
-  metadata: { mediaId: string; userId: string };
+  mediaId: string;
+  amount: number; // Amount in USD cents
+  userId: string;
 }
 
 export const POST: APIRoute = async ({ request, locals, env }) => {
@@ -27,82 +27,117 @@ export const POST: APIRoute = async ({ request, locals, env }) => {
     });
   }
 
-  const { local_price, metadata } = body;
-  if (
-    !local_price?.amount ||
-    !local_price?.currency ||
-    local_price.currency !== 'USDC' ||
-    !metadata?.mediaId ||
-    !metadata?.userId ||
-    typeof metadata.mediaId !== 'string' ||
-    typeof metadata.userId !== 'string'
-  ) {
+  const { mediaId, amount, userId } = body;
+  
+  // Validate required fields
+  if (!mediaId || !amount || !userId || typeof amount !== 'number' || amount <= 0) {
     return new Response(JSON.stringify({ error: 'Missing or invalid required fields' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  if (!env.CDP_API_KEY_SECRET) {
-    return new Response(JSON.stringify({ error: 'API key missing' }), {
-      status: 500,
+  // Verify user authorization
+  if (session.userId !== userId) {
+    return new Response(JSON.stringify({ error: 'User ID mismatch' }), {
+      status: 403,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  const agent = initializeAgent(env);
   try {
-    const amount = parseFloat(local_price.amount);
-    if (isNaN(amount) || amount <= 0) throw new Error('Invalid amount');
+    const db = locals.DB;
+    if (!db) throw new Error('Database connection unavailable');
 
-    const transactionHash = await agent.processPayment(metadata.mediaId, metadata.userId, amount);
-    if (!transactionHash) throw new Error('AgentKit payment processing failed');
+    // Fetch media details and creator wallet
+    const media = await db.prepare('SELECT user_id, individual_price FROM media_assets WHERE id = ?')
+      .bind(mediaId)
+      .first();
 
-    const response = await fetch('https://api.commerce.coinbase.com/charges', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CC-Api-Key': env.CDP_API_KEY_SECRET,
-      },
-      body: JSON.stringify({
-        local_price,
-        metadata,
-        naming: { checkoutPage: `Purchase ${metadata.mediaId} on BCDAstro` },
-        idempotencyKey: crypto.randomUUID(), // Prevent duplicate charges
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Charge creation failed');
+    if (!media) {
+      return new Response(JSON.stringify({ error: 'Media not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const data = await response.json();
-    const chargeId = data.id;
+    // Verify the amount matches the media price
+    if (amount !== media.individual_price) {
+      return new Response(JSON.stringify({ error: 'Amount does not match media price' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    await locals.DB?.prepare(`
-      INSERT INTO purchases (id, user_id, media_id, method, stripe_payment_id, tx_hash, price_paid, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    `).bind(
-      crypto.randomUUID(),
-      metadata.userId,
-      metadata.mediaId,
-      'web3',
-      chargeId,
-      transactionHash,
-      Math.round(amount * 100)
-    ).run().catch((err) => {
-      console.error('DB insert error:', err.message);
-      throw err; // Re-throw to trigger catch block
+    // Get creator's wallet address
+    const creator = await db.prepare('SELECT id FROM users WHERE id = ?')
+      .bind(media.user_id)
+      .first();
+
+    if (!creator) {
+      return new Response(JSON.stringify({ error: 'Creator not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Initialize AgentKit
+    const agent = initializeAgent(env);
+    
+    // Convert USD cents to USDC (1:1 ratio, but in proper decimal format)
+    const usdcAmount = amount / 100; // Convert cents to dollars for USDC transfer
+    
+    // Get USDC contract address from environment
+    const usdcContractAddress = env.USDC_CONTRACT_ADDRESS;
+    if (!usdcContractAddress) {
+      return new Response(JSON.stringify({ error: 'USDC contract address not configured' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Execute USDC transfer using AgentKit
+    const transferResult = await agent.execute({
+      action: 'erc20_transfer',
+      params: {
+        contractAddress: usdcContractAddress,
+        to: creator.id, // Assuming creator.id is their wallet address
+        amount: usdcAmount.toString(),
+      },
     });
 
-    return new Response(JSON.stringify({ id: chargeId, url: data.hosted_url, txHash: transactionHash }), {
+    if (!transferResult || !transferResult.transactionHash) {
+      throw new Error('AgentKit transfer failed');
+    }
+
+    // Create purchase record
+    const purchaseId = crypto.randomUUID();
+    await db.prepare(`
+      INSERT INTO purchases (id, buyer_email, media_asset_id, license_type, price_paid, payment_intent_id, payment_status, purchase_date)
+      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `).bind(
+      purchaseId,
+      session.userId, // Using userId as buyer identifier
+      mediaId,
+      'standard',
+      amount,
+      transferResult.transactionHash,
+      'completed'
+    ).run();
+
+    return new Response(JSON.stringify({ 
+      transactionHash: transferResult.transactionHash,
+      purchaseId: purchaseId,
+      success: true 
+    }), {
       status: 201,
       headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (error) {
     console.error('Charge creation error:', error instanceof Error ? error.message : 'Unknown error');
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Failed to create charge' }), {
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : 'Failed to create charge' 
+    }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { createCharge } from '../lib/coinbase';
-import { Checkout, CheckoutButton } from '@coinbase/onchainkit/checkout';
+import { initiateAgentKitPayment } from '../lib/coinbase';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -26,7 +25,7 @@ export default function MediaCard({
   purchased,
   env,
 }: MediaCardProps) {
-  const [price, setPrice] = useState<number | null>(null);
+  const [priceCents, setPriceCents] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
@@ -36,8 +35,11 @@ export default function MediaCard({
     try {
       const res = await fetch(`/api/price/${id}`);
       const data = await res.json();
-      if (data.price !== undefined) setPrice(data.price / 100);
-      else setError('Invalid price data');
+      if (data.price !== undefined) {
+        setPriceCents(data.price); // Price is already in cents from API
+      } else {
+        setError('Invalid price data');
+      }
     } catch (err) {
       setError('Failed to load price');
     }
@@ -47,15 +49,67 @@ export default function MediaCard({
     fetchPrice();
   }, [fetchPrice]);
 
-  const handleCharge = async (): Promise<string> => {
-    if (!price || !env) throw new Error('Missing price or environment');
+  const handleStripePayment = async () => {
+    if (!priceCents) return;
+    
     setLoading(true);
     try {
-      const chargeId = await createCharge(id, price, 'user123', env);
-      return chargeId;
+      const response = await fetch('/api/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`,
+        },
+        body: JSON.stringify({
+          media_id: id,
+          method: 'stripe',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Payment failed');
+      }
+
+      const data = await response.json();
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      }
     } catch (err) {
-      setError('Charge creation failed');
-      throw err;
+      setError(err instanceof Error ? err.message : 'Payment failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCryptoPayment = async () => {
+    if (!priceCents) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch('/api/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`,
+        },
+        body: JSON.stringify({
+          media_id: id,
+          method: 'web3',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Crypto payment failed');
+      }
+
+      const data = await response.json();
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Crypto payment failed');
     } finally {
       setLoading(false);
     }
@@ -68,10 +122,10 @@ export default function MediaCard({
 
   const mediaContent = type === 'video' ? (
     <iframe
-      src={`https://iframe.videodelivery.net/${previewUrl}`}
+      src={previewUrl}
       allow="autoplay; encrypted-media"
       allowFullScreen
-      className="w-full h-56 object-cover bg-gray-800 rounded-t-lg"
+      className="w-full h-56 object-cover bg-gray-800 rounded-t-lg media-protected"
       title={title}
     />
   ) : (
@@ -79,7 +133,7 @@ export default function MediaCard({
       src={previewUrl}
       alt={title}
       loading="lazy"
-      className="w-full h-56 object-cover bg-gray-800 rounded-t-lg filter brightness-90 hover:brightness-100 transition-all duration-300"
+      className="w-full h-56 object-cover bg-gray-800 rounded-t-lg filter brightness-90 hover:brightness-100 transition-all duration-300 media-protected"
       initial={{ scale: 1 }}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
@@ -91,6 +145,8 @@ export default function MediaCard({
     tap: { scale: 0.95, transition: { duration: 0.2 } },
     disabled: { opacity: 0.6, cursor: 'not-allowed' },
   };
+
+  const displayPrice = priceCents ? (priceCents / 100).toFixed(2) : '0.00';
 
   return (
     <motion.div
@@ -110,41 +166,43 @@ export default function MediaCard({
           <p className="text-sm text-red-400 flex items-center">
             <i className="fas fa-exclamation-triangle mr-1"></i> {error}
           </p>
-        ) : price === null ? (
+        ) : priceCents === null ? (
           <Skeleton height={20} width={80} className="bg-gray-800" />
         ) : (
           <p className="text-sm text-gray-300 flex items-center">
-            <i className="fas fa-dollar-sign mr-1"></i> ${price.toFixed(2)}
+            <i className="fas fa-dollar-sign mr-1"></i> ${displayPrice}
           </p>
         )}
 
         {!purchased && (acceptsCrypto || acceptsStripe) && (
           <div className="flex gap-3 flex-wrap">
             {acceptsCrypto && (
-              <Checkout chargeHandler={handleCharge}>
-                <CheckoutButton
-                  disabled={loading || !price}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl btn-primary transition-all duration-300 flex items-center"
-                >
-                  {loading ? (
-                    <>
-                      <i className="fas fa-spinner animate-spin mr-1"></i> Processing...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fab fa-bitcoin mr-1"></i> Pay with Coinbase
-                    </>
-                  )}
-                </CheckoutButton>
-              </Checkout>
+              <motion.button
+                whileHover="hover"
+                whileTap="tap"
+                variants={buttonVariants}
+                onClick={handleCryptoPayment}
+                disabled={loading || !priceCents}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl btn-primary transition-all duration-300 flex items-center"
+              >
+                {loading ? (
+                  <>
+                    <i className="fas fa-spinner animate-spin mr-1"></i> Processing...
+                  </>
+                ) : (
+                  <>
+                    <i className="fab fa-bitcoin mr-1"></i> Pay with Crypto
+                  </>
+                )}
+              </motion.button>
             )}
             {acceptsStripe && (
               <motion.button
                 whileHover="hover"
                 whileTap="tap"
                 variants={buttonVariants}
-                onClick={handleCharge}
-                disabled={loading || !price}
+                onClick={handleStripePayment}
+                disabled={loading || !priceCents}
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl btn-primary transition-all duration-300 flex items-center"
               >
                 {loading ? (
