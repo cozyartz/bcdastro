@@ -1,78 +1,3 @@
-<<<<<<< HEAD
-@@ .. @@
- /* Responsive Design */
- @media (max-width: 768px) {
-   .container {
-     padding: 0 1rem;
-   }
- }
-+
-+/* Media Protection Styles */
-+.media-protected {
-+  -webkit-user-select: none;
-+  -moz-user-select: none;
-+  -ms-user-select: none;
-+  user-select: none;
-+  -webkit-user-drag: none;
-+  -khtml-user-drag: none;
-+  -moz-user-drag: none;
-+  -o-user-drag: none;
-+  user-drag: none;
-+  pointer-events: auto;
-+}
-+
-+.media-protected::-webkit-media-controls {
-+  -webkit-appearance: none;
-+  display: none !important;
-+}
-+
-+.media-protected::-webkit-media-controls-panel {
-+  display: none !important;
-+  -webkit-appearance: none;
-+}
-+
-+/* Disable right-click context menu on media elements */
-+.media-protected {
-+  -webkit-touch-callout: none;
-+  -webkit-user-select: none;
-+  -khtml-user-select: none;
-+  -moz-user-select: none;
-+  -ms-user-select: none;
-+  user-select: none;
-+}
-+
-+/* Prevent drag and drop */
-+.media-protected {
-+  -webkit-user-drag: none;
-+  -khtml-user-drag: none;
-+  -moz-user-drag: none;
-+  -o-user-drag: none;
-+  user-drag: none;
-+}
-+
-+/* Additional protection for images */
-+img.media-protected {
-+  -webkit-touch-callout: none;
-+  -webkit-user-select: none;
-+  -khtml-user-select: none;
-+  -moz-user-select: none;
-+  -ms-user-select: none;
-+  user-select: none;
-+  -webkit-user-drag: none;
-+  -khtml-user-drag: none;
-+  -moz-user-drag: none;
-+  -o-user-drag: none;
-+  user-drag: none;
-+}
-+
-+/* Disable context menu on media gallery */
-+.media-gallery .media-protected {
-+  -webkit-context-menu: none;
-+  -moz-context-menu: none;
-+  -o-context-menu: none;
-+  context-menu: none;
-+}
-=======
 /* Professional Drone Services Styling */
 :root {
   --primary-blue: #1e40af;
@@ -376,7 +301,7 @@ body {
 /* Responsive design */
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 0 1rem;
   }
   
   .services {
@@ -491,14 +416,75 @@ select option {
   color: white;
 }
 
-/* Utility classes */
-.text-center { text-align: center; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-4 { margin-bottom: 2rem; }
-.mt-4 { margin-top: 2rem; }
-.flex { display: flex; }
-.flex-wrap { flex-wrap: wrap; }
-.gap-4 { gap: 1rem; }
-.justify-center { justify-content: center; }
-.items-center { align-items: center; }
->>>>>>> a4c769c (Updated index.astro)
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+/* Media Protection Styles */
+.media-protected {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: auto;
+}
+
+.media-protected::-webkit-media-controls {
+  -webkit-appearance: none;
+  display: none !important;
+}
+
+.media-protected::-webkit-media-controls-panel {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
+/* Disable right-click context menu on media elements */
+.media-protected {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent drag and drop */
+.media-protected {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Additional protection for images */
+img.media-protected {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Disable context menu on media gallery */
+.media-gallery .media-protected {
+  -webkit-context-menu: none;
+  -moz-context-menu: none;
+  -o-context-menu: none;
+  context-menu: none;
+}
