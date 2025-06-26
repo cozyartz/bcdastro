@@ -80,6 +80,29 @@ export interface Purchase {
   last_download?: string;
   payment_intent_id?: string;
   payment_status: 'pending' | 'completed' | 'failed' | 'refunded';
+  payment_method: 'stripe' | 'crypto';
+  crypto_charge_id?: string;
+  crypto_currency?: string;
+  crypto_amount?: string;
+  crypto_wallet_address?: string;
+  crypto_transaction_hash?: string;
+  crypto_confirmation_count?: number;
+}
+
+export interface CryptoPayment {
+  id: string;
+  purchase_id: string;
+  charge_id: string;
+  currency: string;
+  amount: string;
+  wallet_address: string;
+  status: 'pending' | 'confirmed' | 'failed' | 'expired';
+  transaction_hash?: string;
+  confirmation_count: number;
+  created_at: string;
+  confirmed_at?: string;
+  expires_at: string;
+  metadata?: Record<string, any>;
 }
 
 // Authentication Service
@@ -182,6 +205,11 @@ export const MediaService = {
       .eq('id', id);
     
     return { error };
+  },
+
+  // Alias for createMediaAsset for backward compatibility
+  async uploadMedia(mediaData: Partial<MediaAsset>) {
+    return this.createMediaAsset(mediaData);
   },
 
   async searchMedia(query: string, category?: string, type?: string) {
@@ -303,5 +331,75 @@ export const PurchaseService = {
       .single();
     
     return { data, error };
+  },
+};
+
+// Crypto Payment Service
+export const CryptoPaymentService = {
+  async createCryptoPayment(paymentData: Partial<CryptoPayment>) {
+    const { data, error } = await supabase
+      .from('crypto_payments')
+      .insert([paymentData])
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
+  async getCryptoPaymentByChargeId(chargeId: string) {
+    const { data, error } = await supabase
+      .from('crypto_payments')
+      .select('*')
+      .eq('charge_id', chargeId)
+      .single();
+    
+    return { data, error };
+  },
+
+  async updateCryptoPaymentStatus(
+    chargeId: string, 
+    status: 'pending' | 'confirmed' | 'failed' | 'expired',
+    transactionHash?: string,
+    confirmationCount?: number
+  ) {
+    const updates: any = { status };
+    
+    if (transactionHash) updates.transaction_hash = transactionHash;
+    if (confirmationCount !== undefined) updates.confirmation_count = confirmationCount;
+    if (status === 'confirmed') updates.confirmed_at = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from('crypto_payments')
+      .update(updates)
+      .eq('charge_id', chargeId)
+      .select()
+      .single();
+    
+    return { data, error };
+  },
+
+  async getCryptoPaymentsByPurchaseId(purchaseId: string) {
+    const { data, error } = await supabase
+      .from('crypto_payments')
+      .select('*')
+      .eq('purchase_id', purchaseId)
+      .order('created_at', { ascending: false });
+    
+    return { data, error };
+  },
+
+  async getExpiredCryptoPayments() {
+    const { data, error } = await supabase
+      .from('crypto_payments')
+      .select('*')
+      .eq('status', 'pending')
+      .lt('expires_at', new Date().toISOString());
+    
+    return { data, error };
+  },
+
+  async cleanupExpiredPayments() {
+    const { error } = await supabase.rpc('cleanup_expired_crypto_payments');
+    return { error };
   },
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthService, MediaService, User, MediaAsset } from '../lib/supabase';
 import AuthModal from './AuthModal';
-import UploadModal from './UploadModal';
+import EnhancedUploadModal from './EnhancedUploadModal';
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
@@ -345,7 +345,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      <UploadModal
+      <EnhancedUploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
         userId={user.id}

@@ -1,0 +1,441 @@
+---
+// Demo page to showcase the enhanced Cloudflare upload system
+import Layout from '../components/Layout.astro';
+---
+
+<Layout title="Advanced Upload System Demo - Battle Creek Drone">
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="subtitle">Professional Upload Platform</div>
+        <h1>Direct-to-Cloudflare Upload System</h1>
+        <p class="hero-description">
+          Experience our advanced upload system that sends your drone footage and images 
+          directly to Cloudflare's global infrastructure. No server bandwidth limits, 
+          real-time progress tracking, and automatic optimization for worldwide delivery.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">30GB</span>
+            <span class="stat-label">Max Video Size</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">100MB</span>
+            <span class="stat-label">Max Image Size</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">0s</span>
+            <span class="stat-label">Server Upload Time</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="content-section glass">
+      <div class="section-header">
+        <h2 class="section-title">Advanced Upload Features</h2>
+        <p class="section-subtitle">Professional-grade upload system designed for drone content creators</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fab fa-cloudflare"></i>
+          </div>
+          <h3>Direct to Cloudflare</h3>
+          <p>Files upload directly to Cloudflare's edge network, bypassing our servers entirely for maximum speed and reliability</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>Real-time Progress</h3>
+          <p>Track upload progress with live percentage updates, estimated time remaining, and detailed status information</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-check"></i>
+          </div>
+          <h3>File Validation</h3>
+          <p>Comprehensive file validation including format checking, size limits, and quality requirements before upload starts</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3>Auto Processing</h3>
+          <p>Automatic thumbnail generation, metadata extraction, and format optimization handled by Cloudflare infrastructure</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Multi-Vendor Support</h3>
+          <p>Per-vendor upload quotas, storage limits, and analytics tracking for marketplace scalability</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>Mobile Optimized</h3>
+          <p>Responsive upload interface that works seamlessly on desktop, tablet, and mobile devices</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Flow Demo -->
+    <section class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">Upload Process Flow</h2>
+        <p class="section-subtitle">How our direct upload system works</p>
+      </div>
+      
+      <div class="upload-flow">
+        <div class="flow-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>File Selection & Validation</h3>
+            <p>Choose your drone footage or images. Our system validates file type, size, and quality requirements instantly.</p>
+            <div class="step-features">
+              <span><i class="fas fa-check"></i> Format validation</span>
+              <span><i class="fas fa-check"></i> Size limits</span>
+              <span><i class="fas fa-check"></i> Quality checks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Secure Upload URL Generation</h3>
+            <p>Our system generates a secure, time-limited upload URL directly to Cloudflare's infrastructure.</p>
+            <div class="step-features">
+              <span><i class="fas fa-check"></i> Secure URLs</span>
+              <span><i class="fas fa-check"></i> Time-limited access</span>
+              <span><i class="fas fa-check"></i> No API key exposure</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Direct Upload to Edge</h3>
+            <p>Files upload directly from your browser to Cloudflare's global edge network with real-time progress tracking.</p>
+            <div class="step-features">
+              <span><i class="fas fa-check"></i> Edge upload</span>
+              <span><i class="fas fa-check"></i> Progress tracking</span>
+              <span><i class="fas fa-check"></i> Resumable uploads</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Processing & Optimization</h3>
+            <p>Cloudflare automatically processes your media, generates thumbnails, and optimizes for global delivery.</p>
+            <div class="step-features">
+              <span><i class="fas fa-check"></i> Auto thumbnails</span>
+              <span><i class="fas fa-check"></i> Global CDN</span>
+              <span><i class="fas fa-check"></i> Format optimization</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Storage Services -->
+    <section class="content-section glass">
+      <div class="section-header">
+        <h2 class="section-title">Intelligent Storage Routing</h2>
+        <p class="section-subtitle">Automatic selection of optimal Cloudflare service based on file type and size</p>
+      </div>
+      
+      <div class="storage-grid">
+        <div class="storage-card stream">
+          <div class="storage-header">
+            <i class="fas fa-play-circle"></i>
+            <h3>Cloudflare Stream</h3>
+            <span class="storage-badge">Videos ≤ 200MB</span>
+          </div>
+          <ul class="storage-features">
+            <li><i class="fas fa-check"></i> HLS adaptive streaming</li>
+            <li><i class="fas fa-check"></i> Automatic thumbnails</li>
+            <li><i class="fas fa-check"></i> Global video delivery</li>
+            <li><i class="fas fa-check"></i> Player analytics</li>
+          </ul>
+        </div>
+
+        <div class="storage-card r2">
+          <div class="storage-header">
+            <i class="fas fa-database"></i>
+            <h3>Cloudflare R2</h3>
+            <span class="storage-badge">Large Files > 200MB</span>
+          </div>
+          <ul class="storage-features">
+            <li><i class="fas fa-check"></i> Up to 30GB files</li>
+            <li><i class="fas fa-check"></i> Zero egress fees</li>
+            <li><i class="fas fa-check"></i> S3-compatible API</li>
+            <li><i class="fas fa-check"></i> Global distribution</li>
+          </ul>
+        </div>
+
+        <div class="storage-card images">
+          <div class="storage-header">
+            <i class="fas fa-image"></i>
+            <h3>Cloudflare Images</h3>
+            <span class="storage-badge">Images ≤ 10MB</span>
+          </div>
+          <ul class="storage-features">
+            <li><i class="fas fa-check"></i> Automatic optimization</li>
+            <li><i class="fas fa-check"></i> Multiple variants</li>
+            <li><i class="fas fa-check"></i> WebP conversion</li>
+            <li><i class="fas fa-check"></i> On-the-fly resizing</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Button -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2>Ready to Experience Advanced Uploads?</h2>
+        <p>
+          Try our professional upload system and see how easy it is to get your drone 
+          content onto Cloudflare's global network with zero server limitations.
+        </p>
+        <div class="cta-buttons">
+          <a href="/dashboard" class="professional-button">
+            <i class="fas fa-cloud-upload-alt"></i>
+            Try Upload System
+          </a>
+          <a href="/gallery" class="professional-button secondary">
+            <i class="fas fa-images"></i>
+            View Content Gallery
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-card h3 {
+    margin-bottom: 1rem;
+    color: var(--white);
+    font-size: 1.2rem;
+  }
+
+  .feature-card p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+
+  .upload-flow {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .flow-step {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .flow-step:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(79, 168, 216, 0.3);
+  }
+
+  .step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .step-content h3 {
+    color: var(--white);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .step-content p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .step-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .step-features span {
+    background: rgba(79, 168, 216, 0.2);
+    color: var(--accent-cyan);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .storage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .storage-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .storage-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .storage-card.stream {
+    border-color: rgba(79, 168, 216, 0.3);
+  }
+
+  .storage-card.r2 {
+    border-color: rgba(34, 197, 94, 0.3);
+  }
+
+  .storage-card.images {
+    border-color: rgba(251, 191, 36, 0.3);
+  }
+
+  .storage-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .storage-header i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .storage-card.stream .storage-header i {
+    color: #4fa8d8;
+  }
+
+  .storage-card.r2 .storage-header i {
+    color: #22c55e;
+  }
+
+  .storage-card.images .storage-header i {
+    color: #fbbf24;
+  }
+
+  .storage-header h3 {
+    color: var(--white);
+    margin-bottom: 0.5rem;
+  }
+
+  .storage-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .storage-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .storage-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+  }
+
+  .storage-features i {
+    color: var(--accent-cyan);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .flow-step {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .step-number {
+      align-self: center;
+    }
+
+    .storage-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

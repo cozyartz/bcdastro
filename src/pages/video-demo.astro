@@ -1,0 +1,272 @@
+---
+// Demo page to showcase video streaming functionality
+import Layout from '../components/Layout.astro';
+import { cloudflareService } from '../lib/cloudflare';
+
+// Get video items only
+const allItems = await cloudflareService.getGalleryItems();
+const videoItems = allItems.filter(item => item.type === 'video');
+---
+
+<Layout title="Video Streaming Demo - Battle Creek Drone">
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="subtitle">Professional Video Streaming</div>
+        <h1>Cloudflare Stream Integration</h1>
+        <p class="hero-description">
+          Experience our advanced video streaming platform powered by Cloudflare Stream. 
+          Watch high-quality drone footage with adaptive streaming, preview functionality, 
+          and integrated payment system.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">{videoItems.length}</span>
+            <span class="stat-label">Video Assets</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">4K</span>
+            <span class="stat-label">Max Resolution</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">HLS</span>
+            <span class="stat-label">Streaming</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="content-section glass">
+      <div class="section-header">
+        <h2 class="section-title">Video Streaming Features</h2>
+        <p class="section-subtitle">Advanced video playback with professional features</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-play-circle"></i>
+          </div>
+          <h3>HLS Streaming</h3>
+          <p>Adaptive bitrate streaming using HTTP Live Streaming (HLS) for optimal playback quality</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-eye"></i>
+          </div>
+          <h3>Preview Mode</h3>
+          <p>30-second previews allow customers to sample content before making a purchase</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>Responsive Design</h3>
+          <p>Optimized video player that works seamlessly across desktop, tablet, and mobile devices</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h3>Secure Playback</h3>
+          <p>Protected video content with purchase verification and download limits</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-credit-card"></i>
+          </div>
+          <h3>Integrated Payments</h3>
+          <p>Seamless payment flow supporting both traditional and cryptocurrency payments</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h3>License Management</h3>
+          <p>Multiple licensing tiers with different usage rights and pricing structures</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Gallery Demo -->
+    <div id="video-gallery-root"></div>
+
+    <!-- Technical Details -->
+    <section class="content-section glass">
+      <div class="section-header">
+        <h2 class="section-title">Technical Implementation</h2>
+        <p class="section-subtitle">Built with modern streaming technologies</p>
+      </div>
+      
+      <div class="tech-grid">
+        <div class="tech-item">
+          <h4><i class="fab fa-cloudflare"></i> Cloudflare Stream</h4>
+          <p>Video hosting and delivery platform with global CDN</p>
+        </div>
+        
+        <div class="tech-item">
+          <h4><i class="fas fa-code"></i> HLS.js</h4>
+          <p>JavaScript library for HTTP Live Streaming support</p>
+        </div>
+        
+        <div class="tech-item">
+          <h4><i class="fab fa-react"></i> React Components</h4>
+          <p>Interactive video player with custom controls</p>
+        </div>
+        
+        <div class="tech-item">
+          <h4><i class="fas fa-database"></i> Supabase</h4>
+          <p>Purchase tracking and user management</p>
+        </div>
+        
+        <div class="tech-item">
+          <h4><i class="fab fa-stripe"></i> Stripe + Coinbase</h4>
+          <p>Dual payment processing for fiat and crypto</p>
+        </div>
+        
+        <div class="tech-item">
+          <h4><i class="fas fa-mobile-alt"></i> Responsive</h4>
+          <p>Mobile-first design with touch controls</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="hero">
+      <div class="hero-content">
+        <h2>Ready to Experience Our Content?</h2>
+        <p>
+          Browse our full gallery of professional aerial photography and videography.
+          Experience high-quality streaming with preview functionality and secure purchasing.
+        </p>
+        <div class="cta-buttons">
+          <a href="/gallery" class="professional-button">
+            <i class="fas fa-play"></i>
+            Explore Video Gallery
+          </a>
+          <a href="/services" class="professional-button secondary">
+            <i class="fas fa-drone"></i>
+            Learn About Our Services
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-cyan);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    color: var(--accent-cyan);
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-card h3 {
+    margin-bottom: 1rem;
+    color: var(--white);
+    font-size: 1.2rem;
+  }
+
+  .feature-card p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tech-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .tech-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(79, 168, 216, 0.3);
+  }
+
+  .tech-item h4 {
+    color: var(--accent-cyan);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .tech-item p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .tech-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import MediaGallery from '../components/MediaGallery';
+  
+  // Mount the React Video Gallery component
+  document.addEventListener('DOMContentLoaded', function() {
+    const galleryRoot = document.getElementById('video-gallery-root');
+    if (galleryRoot) {
+      const videoData = JSON.parse(document.getElementById('video-data').textContent);
+      const categoriesData = ['Urban', 'Nature', 'Real Estate']; // Video categories only
+      
+      const root = createRoot(galleryRoot);
+      root.render(React.createElement(MediaGallery, {
+        initialItems: videoData,
+        categories: categoriesData
+      }));
+    }
+  });
+</script>
+
+<!-- Pass video data to React component -->
+<script type="application/json" id="video-data" set:html={JSON.stringify(videoItems)}></script>
