@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { AuthService, MediaService, User, MediaAsset } from '../lib/supabase';
 import AuthModal from './AuthModal';
 import EnhancedUploadModal from './EnhancedUploadModal';
+import ClientProjectManager from './ClientProjectManager';
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [userMedia, setUserMedia] = useState<MediaAsset[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showProjectManager, setShowProjectManager] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -39,7 +41,12 @@ export default function Dashboard() {
           avatar_url: currentUser.user_metadata?.avatar_url,
           created_at: currentUser.created_at || '',
           is_verified: currentUser.email_confirmed_at ? true : false,
-          subscription_tier: 'free',
+          subscription_tier: 'pro',
+          subscription_status: 'active',
+          monthly_fee: 10.00,
+          fiat_commission_rate: 0.15,
+          crypto_commission_rate: 0.10,
+          wallet_connected: false,
           is_admin: currentUser.is_admin || false
         });
       }
@@ -193,12 +200,32 @@ export default function Dashboard() {
               </span>
             )}
             <span className={`subscription-badge ${user.subscription_tier}`}>
-              {user.subscription_tier.toUpperCase()}
+              {user.subscription_tier.toUpperCase()} - ${user.monthly_fee}/mo
             </span>
+            <div className="commission-info text-xs text-gray-500 ml-2">
+              <span className="fiat-rate">
+                Card: {(user.fiat_commission_rate * 100).toFixed(1)}%
+              </span>
+              <span className="crypto-rate ml-2">
+                Crypto: {(user.crypto_commission_rate * 100).toFixed(1)}%
+              </span>
+              {user.wallet_connected && (
+                <span className="wallet-connected ml-2 text-green-500">
+                  <i className="fas fa-wallet"></i> Wallet Connected
+                </span>
+              )}
+            </div>
           </div>
         </div>
         
         <div className="header-actions">
+          <button 
+            className="professional-button"
+            onClick={() => setShowProjectManager(true)}
+          >
+            <i className="fas fa-project-diagram"></i>
+            Manage Projects
+          </button>
           <button 
             className="professional-button"
             onClick={() => setShowUploadModal(true)}
@@ -350,6 +377,17 @@ export default function Dashboard() {
         onClose={() => setShowUploadModal(false)}
         userId={user.id}
       />
+
+      {showProjectManager && (
+        <div className="modal-overlay">
+          <div className="modal project-manager-modal">
+            <ClientProjectManager
+              user={user}
+              onClose={() => setShowProjectManager(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

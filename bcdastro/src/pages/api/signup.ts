@@ -1,11 +1,13 @@
 import type { APIRoute } from 'astro';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { crypto } from 'crypto';
+import { randomUUID } from 'crypto';
 
 interface SignupRequest {
   email: string;
   password: string;
+  fullName?: string;
+  isAdmin?: boolean;
 }
 
 export const POST: APIRoute = async ({ request, locals, env }) => {
@@ -19,7 +21,7 @@ export const POST: APIRoute = async ({ request, locals, env }) => {
     });
   }
 
-  const { email, password } = body;
+  const { email, password, fullName, isAdmin } = body;
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     return new Response(JSON.stringify({ error: 'Missing or invalid email or password' }), {
       status: 400,
@@ -57,10 +59,37 @@ export const POST: APIRoute = async ({ request, locals, env }) => {
   }
 
   try {
-    const userId = crypto.randomUUID();
+    const db = locals.DB;
+    if (!db) throw new Error('Database connection unavailable');
+    
+    const userId = randomUUID();
     const passwordHash = await bcrypt.hash(password, 12); // Increased salt rounds for security
-    await db.prepare('INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)')
-      .bind(userId, email.toLowerCase(), passwordHash)
+    
+    // Handle special case for admin user
+    const isAdminUser = isAdmin && email.toLowerCase() === 'cozy2963@gmail.com';
+    
+    await db.prepare(`
+      INSERT INTO users (
+        id, email, password_hash, full_name, is_admin, is_verified, 
+        subscription_tier, subscription_status, monthly_fee, 
+        fiat_commission_rate, crypto_commission_rate, wallet_connected,
+        created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `)
+      .bind(
+        userId, 
+        email.toLowerCase(), 
+        passwordHash,
+        fullName || null,
+        isAdminUser || false,
+        isAdminUser || false, // Auto-verify admin
+        isAdminUser ? 'enterprise' : 'pro',
+        'active',
+        isAdminUser ? 0 : 10.00,   // Admin pays no monthly fee
+        isAdminUser ? 0 : 0.15,    // Admin pays no fiat commission
+        isAdminUser ? 0 : 0.10,    // Admin pays no crypto commission
+        false                      // Wallet not connected by default
+      )
       .run();
 
     const token = jwt.sign({ userId }, env.JWT_SECRET, {
@@ -74,3 +103,8 @@ export const POST: APIRoute = async ({ request, locals, env }) => {
   } catch (error) {
     console.error('Signup error:', error instanceof Error ? error.message : 'Unknown error');
     return new Response(JSON.stringify({ error: 'Failed to create user' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+};

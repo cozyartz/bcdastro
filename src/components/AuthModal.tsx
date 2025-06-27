@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AuthService, PilotCertService } from '../lib/supabase';
+import Web3Auth from './Web3Auth';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const [pilotCertNumber, setPilotCertNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [authMethod, setAuthMethod] = useState<'email' | 'oauth' | 'wallet'>('email');
 
   const handleOAuthSignIn = async (provider: 'github' | 'google') => {
     setLoading(true);
@@ -32,6 +34,29 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleWalletAuth = async (walletData: any) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      // Store token and redirect to dashboard
+      if (walletData.token) {
+        localStorage.setItem('auth_token', walletData.token);
+        window.location.href = '/dashboard';
+      }
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWalletError = (errorMessage: string) => {
+    setError(errorMessage);
+    setLoading(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,32 +122,67 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
           </button>
         </div>
 
-        <div className="oauth-buttons">
+        {/* Authentication Method Tabs */}
+        <div className="auth-method-tabs">
           <button
-            type="button"
-            className="oauth-btn github-btn"
-            onClick={() => handleOAuthSignIn('github')}
-            disabled={loading}
+            className={`tab ${authMethod === 'email' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('email')}
+          >
+            <i className="fas fa-envelope"></i>
+            Email
+          </button>
+          <button
+            className={`tab ${authMethod === 'oauth' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('oauth')}
           >
             <i className="fab fa-github"></i>
-            Continue with GitHub
+            Social
           </button>
           <button
-            type="button"
-            className="oauth-btn google-btn"
-            onClick={() => handleOAuthSignIn('google')}
-            disabled={loading}
+            className={`tab ${authMethod === 'wallet' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('wallet')}
           >
-            <i className="fab fa-google"></i>
-            Continue with Google
+            <i className="fas fa-wallet"></i>
+            Web3
           </button>
         </div>
 
-        <div className="divider">
-          <span>or</span>
-        </div>
+        {/* OAuth Buttons */}
+        {authMethod === 'oauth' && (
+          <div className="oauth-buttons">
+            <button
+              type="button"
+              className="oauth-btn github-btn"
+              onClick={() => handleOAuthSignIn('github')}
+              disabled={loading}
+            >
+              <i className="fab fa-github"></i>
+              Continue with GitHub
+            </button>
+            <button
+              type="button"
+              className="oauth-btn google-btn"
+              onClick={() => handleOAuthSignIn('google')}
+              disabled={loading}
+            >
+              <i className="fab fa-google"></i>
+              Continue with Google
+            </button>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        {/* Web3 Wallet Authentication */}
+        {authMethod === 'wallet' && (
+          <Web3Auth
+            onSuccess={handleWalletAuth}
+            onError={handleWalletError}
+            className="wallet-auth-section"
+          />
+        )}
+
+        {/* Email/Password Form */}
+        {authMethod === 'email' && (
+          <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'signup' && (
             <div className="form-group">
               <label htmlFor="fullName">
@@ -200,7 +260,10 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             {loading ? 'Processing...' : (mode === 'signin' ? 'Sign In' : 'Create Account')}
           </button>
         </form>
+        )}
 
+        {/* Show mode switch for email auth only */}
+        {authMethod === 'email' && (
         <div className="auth-switch">
           {mode === 'signin' ? (
             <p>
@@ -218,6 +281,15 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             </p>
           )}
         </div>
+        )}
+
+        {/* Show error for all auth methods */}
+        {error && (
+          <div className="error-message">
+            <i className="fas fa-exclamation-triangle"></i>
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

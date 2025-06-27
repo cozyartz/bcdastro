@@ -23,12 +23,22 @@ const currentYear = new Date().getFullYear();
     >
       Coded with <i class="fas fa-heart text-red-400"></i> by Cozyartz Media Group
     </motion.p>
-    <motion.a
-      href="/terms"
-      class="mt-2 inline-block text-cyan-400 hover:underline transition-colors duration-300"
-      transition={{ delay: 0.6 }}
-    >
-      <i class="fas fa-file-contract mr-1"></i> Terms of Service
-    </motion.a>
+    <div class="flex flex-wrap justify-center gap-4 text-sm">
+      <motion.a
+        href="/terms"
+        class="text-cyan-400 hover:underline transition-colors duration-300"
+        transition={{ delay: 0.6 }}
+      >
+        <i class="fas fa-file-contract mr-1"></i> Terms of Service
+      </motion.a>
+      <motion.a
+        href="/dashboard"
+        class="text-gray-500 hover:text-cyan-400 transition-colors duration-300 opacity-70 hover:opacity-100"
+        transition={{ delay: 0.8 }}
+        title="Creator Login"
+      >
+        <i class="fas fa-key mr-1"></i> Access
+      </motion.a>
+    </div>
   </motion.div>
 </footer>
