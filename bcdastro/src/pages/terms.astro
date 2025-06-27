@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { motion } from 'framer-motion';
+
+const currentYear = new Date().getFullYear();
+---
+
+<Layout>
+  <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <motion.section
+      className="text-center"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h1 className="text-4xl font-bold section-title">Terms of Service</h1>
+      <p className="text-gray-400 mt-2">Last Updated: {currentYear}-06-19</p>
+    </motion.section>
+
+    <nav className="space-y-2 mb-6" aria-label="Table of Contents">
+      <a href="#acceptance" className="text-cyan-400 hover:underline">1. Acceptance of Terms</a>
+      <a href="#fees" className="text-cyan-400 hover:underline">2. Service Fees</a>
+      <a href="#content" className="text-cyan-400 hover:underline">3. User Content</a>
+      <a href="#purchases" className="text-cyan-400 hover:underline">4. Payment and Purchases</a>
+      <a href="#liability" className="text-cyan-400 hover:underline">5. Limitation of Liability</a>
+      <a href="#termination" className="text-cyan-400 hover:underline">6. Termination</a>
+      <a href="#governing" className="text-cyan-400 hover:underline">7. Governing Law</a>
+      <a href="#changes" className="text-cyan-400 hover:underline">8. Changes to Terms</a>
+      <a href="#privacy" className="text-cyan-400 hover:underline">9. Privacy Policy</a>
+      <a href="#ip" className="text-cyan-400 hover:underline">10. Intellectual Property</a>
+      <a href="#dispute" className="text-cyan-400 hover:underline">11. Dispute Resolution</a>
+      <a href="#moderation" className="text-cyan-400 hover:underline">12. Content Moderation</a>
+    </nav>
+
+    <motion.section
+      className="prose prose-invert max-w-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.1, duration: 0.5 }}
+    >
+      <h2 id="acceptance" className="text-2xl font-semibold text-cyan-400">1. Acceptance of Terms</h2>
+      <p>By accessing or using BCDAstro, operated by Battle Creek Drone, LLC ("we," "us," or "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, you may not use our services.</p>
+
+      <h2 id="fees" className="text-2xl font-semibold text-cyan-400">2. Service Fees</h2>
+      <p>We charge a service fee of 20% on each media sale or a minimum of $1 per transaction, whichever is higher, payable to Battle Creek Drone, LLC. We reserve the right to adjust fees with 30 days' notice. All fees are non-refundable unless required by law.</p>
+
+      <h2 id="content" className="text-2xl font-semibold text-cyan-400">3. User Content</h2>
+      <p>Users grant Battle Creek Drone, LLC a perpetual, irrevocable, royalty-free license to use, display, and distribute uploaded media for promotional purposes. You retain ownership but waive all claims against us for use within our platform.</p>
+
+      <h2 id="purchases" className="text-2xl font-semibold text-cyan-400">4. Payment and Purchases</h2>
+      <p>All purchases are final. Battle Creek Drone, LLC is not liable for transaction failures due to user error or third-party services. Buyers receive a limited, non-transferable license to use purchased media for personal use only.</p>
+
+      <h2 id="liability" className="text-2xl font-semibold text-cyan-400">5. Limitation of Liability</h2>
+      <p>Battle Creek Drone, LLC is not responsible for any indirect, incidental, or consequential damages arising from use of the service. Our liability is limited to the amount you paid for services, if any.</p>
+
+      <h2 id="termination" className="text-2xl font-semibold text-cyan-400">6. Termination</h2>
+      <p>We may terminate or suspend your account at our sole discretion for any reason, including violation of these Terms, with or without notice. Upon termination, you lose access to all content and data.</p>
+
+      <h2 id="governing" className="text-2xl font-semibold text-cyan-400">7. Governing Law</h2>
+      <p>These Terms are governed by the laws of Michigan, USA. Any disputes will be resolved in Michigan courts, and you consent to jurisdiction there.</p>
+
+      <h2 id="changes" className="text-2xl font-semibold text-cyan-400">8. Changes to Terms</h2>
+      <p>We may update these Terms at any time. Continued use after changes constitutes acceptance. We will notify you via email or site posting.</p>
+
+      <h2 id="privacy" className="text-2xl font-semibold text-cyan-400">9. Privacy Policy</h2>
+      <p>Battle Creek Drone, LLC collects your email, upload metadata, and purchase history to deliver services. We may use this data for analytics, marketing, and sharing with partners at our discretion. You may request data deletion with 30 days' notice and a $10 fee. Cookies are used without an opt-out option.</p>
+
+      <h2 id="ip" className="text-2xl font-semibold text-cyan-400">10. Intellectual Property</h2>
+      <p>All media uploaded to BCDAstro becomes part of Battle Creek Drone, LLC's intellectual property portfolio. Users grant us exclusive rights to modify, distribute, and sublicense the content without further compensation.</p>
+
+      <h2 id="dispute" className="text-2xl font-semibold text-cyan-400">11. Dispute Resolution</h2>
+      <p>Disputes must be resolved through arbitration in Michigan, with users bearing all costs. Damages are capped at $100, and Battle Creek Drone, LLC is not liable for legal fees.</p>
+
+      <h2 id="moderation" className="text-2xl font-semibold text-cyan-400">12. Content Moderation</h2>
+      <p>Battle Creek Drone, LLC reserves the right to remove any content at our discretion without liability for user losses or refunds.</p>
+
+      <p className="text-gray-500 mt-6">Disclaimer: These Terms are subject to change without prior notice beyond what is stated herein. © {currentYear} Battle Creek Drone, LLC. All rights reserved.</p>
+    </motion.section>
+  </main>
+</Layout>

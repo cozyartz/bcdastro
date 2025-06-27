@@ -1,0 +1,169 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article';
+  robots?: string;
+  canonical?: string;
+  noIndex?: boolean; // Option to disable indexing
+}
+
+const {
+  title,
+  description,
+  image = `${Astro.site?.href || 'https://battlecreekdrone.com'}/meta/preview.jpg`,
+  url = Astro.url.href || 'https://battlecreekdrone.com',
+  type = 'website',
+  robots = 'index, follow',
+  canonical = url,
+  noIndex = false,
+} = Astro.props;
+
+// Ensure trailing slash for canonical URL
+const cleanCanonical = canonical.endsWith('/') ? canonical : `${canonical}/`;
+
+// Fallback site URL from environment if Astro.site is undefined
+const siteUrl = Astro.site?.href || import.meta.env.SITE_URL || 'https://battlecreekdrone.com';
+---
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="generator" content="Astro v4.16.18" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="robots" content={noIndex ? 'noindex, nofollow' : robots} />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={`${siteUrl}${image}`} />
+  <meta property="og:url" content={`${siteUrl}${url}`} />
+  <meta property="og:type" content={type} />
+  <meta property="og:site_name" content="BCDAstro" />
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={`${siteUrl}${image}`} />
+  <meta name="twitter:site" content="@BattleCreekDrone" /> <!-- Optional: Add your Twitter handle -->
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={cleanCanonical} />
+
+  <!-- Favicon and Manifest (Optional but recommended) -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Structured Data (WebSite JSON-LD) -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BCDAstro",
+    "url": siteUrl,
+    "description": description,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${siteUrl}/media?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  })}></script>
+
+  <!-- Structured Data (LocalBusiness JSON-LD) -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${siteUrl}/#business`,
+    "name": "Battle Creek Drone",
+    "alternateName": "BCDAstro",
+    "description": "Professional drone videography and photography services specializing in real estate, commercial, and aerial media production.",
+    "url": siteUrl,
+    "logo": `${siteUrl}/favicon.svg`,
+    "image": `${siteUrl}/meta/preview.jpg`,
+    "telephone": "+1-269-555-DRONE",
+    "email": "contact@battlecreekdrone.com",
+    "priceRange": "$$",
+    "currenciesAccepted": "USD",
+    "paymentAccepted": "Cash, Credit Card, Cryptocurrency",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Battle Creek",
+      "addressRegion": "MI",
+      "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 42.3211,
+      "longitude": -85.1797
+    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Battle Creek",
+        "containedIn": {
+          "@type": "State",
+          "name": "Michigan"
+        }
+      },
+      {
+        "@type": "State", 
+        "name": "Michigan"
+      }
+    ],
+    "serviceType": [
+      "Drone Photography",
+      "Drone Videography", 
+      "Aerial Photography",
+      "Real Estate Photography",
+      "Commercial Video Production",
+      "Event Coverage"
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Drone Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Real Estate Photography",
+            "description": "Professional aerial photography for real estate listings"
+          }
+        },
+        {
+          "@type": "Offer", 
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Commercial Video Production",
+            "description": "High-quality drone videography for commercial purposes"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service", 
+            "name": "Event Coverage",
+            "description": "Aerial coverage of special events and occasions"
+          }
+        }
+      ]
+    },
+    "sameAs": [
+      "https://twitter.com/BattleCreekDrone",
+      "https://facebook.com/BattleCreekDrone",
+      "https://instagram.com/battlecreekdrone"
+    ],
+    "foundingDate": "2024",
+    "slogan": "Professional drone services for Battle Creek and beyond",
+    "knowsAbout": [
+      "Drone Photography",
+      "Aerial Videography", 
+      "FAA Part 107",
+      "Real Estate Marketing",
+      "Commercial Video Production"
+    ]
+  })}></script>
+</head>

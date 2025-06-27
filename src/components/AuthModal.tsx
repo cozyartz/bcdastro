@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AuthService } from '../lib/supabase';
+import { AuthService, PilotCertService } from '../lib/supabase';
+import Web3Auth from './Web3Auth';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,8 +13,51 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [pilotCertNumber, setPilotCertNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [authMethod, setAuthMethod] = useState<'email' | 'oauth' | 'wallet'>('email');
+
+  const handleOAuthSignIn = async (provider: 'github' | 'google') => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = provider === 'github' 
+        ? await AuthService.signInWithGitHub()
+        : await AuthService.signInWithGoogle();
+      
+      if (error) throw error;
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWalletAuth = async (walletData: any) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      // Store token and redirect to dashboard
+      if (walletData.token) {
+        localStorage.setItem('auth_token', walletData.token);
+        window.location.href = '/dashboard';
+      }
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleWalletError = (errorMessage: string) => {
+    setError(errorMessage);
+    setLoading(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +66,31 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
     try {
       if (mode === 'signup') {
-        const { error } = await AuthService.signUp(email, password, fullName);
+        // Validate pilot certificate first
+        if (pilotCertNumber) {
+          const { data: validation, error: validationError } = await PilotCertService.validateCertificate(pilotCertNumber, email);
+          
+          if (validationError) {
+            throw new Error(`Certificate validation failed: ${validationError.message}`);
+          }
+          
+          if (!validation?.validation?.isValid) {
+            throw new Error(`Invalid pilot certificate number. Please check your FAA Part 107 certificate number.`);
+          }
+          
+          if (validation.validation.confidence < 0.5) {
+            const proceed = confirm(`Certificate validation returned low confidence (${Math.round(validation.validation.confidence * 100)}%). Do you want to proceed anyway?`);
+            if (!proceed) {
+              return;
+            }
+          }
+        }
+        
+        const { error } = await AuthService.signUp(email, password, fullName, pilotCertNumber);
         if (error) throw error;
-        alert('Check your email for the confirmation link!');
+        
+        setError('');
+        alert('Account created successfully! Please check your email for a verification link to complete your registration.');
       } else {
         const { error } = await AuthService.signIn(email, password);
         if (error) throw error;
@@ -56,7 +122,67 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        {/* Authentication Method Tabs */}
+        <div className="auth-method-tabs">
+          <button
+            className={`tab ${authMethod === 'email' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('email')}
+          >
+            <i className="fas fa-envelope"></i>
+            Email
+          </button>
+          <button
+            className={`tab ${authMethod === 'oauth' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('oauth')}
+          >
+            <i className="fab fa-github"></i>
+            Social
+          </button>
+          <button
+            className={`tab ${authMethod === 'wallet' ? 'active' : ''}`}
+            onClick={() => setAuthMethod('wallet')}
+          >
+            <i className="fas fa-wallet"></i>
+            Web3
+          </button>
+        </div>
+
+        {/* OAuth Buttons */}
+        {authMethod === 'oauth' && (
+          <div className="oauth-buttons">
+            <button
+              type="button"
+              className="oauth-btn github-btn"
+              onClick={() => handleOAuthSignIn('github')}
+              disabled={loading}
+            >
+              <i className="fab fa-github"></i>
+              Continue with GitHub
+            </button>
+            <button
+              type="button"
+              className="oauth-btn google-btn"
+              onClick={() => handleOAuthSignIn('google')}
+              disabled={loading}
+            >
+              <i className="fab fa-google"></i>
+              Continue with Google
+            </button>
+          </div>
+        )}
+
+        {/* Web3 Wallet Authentication */}
+        {authMethod === 'wallet' && (
+          <Web3Auth
+            onSuccess={handleWalletAuth}
+            onError={handleWalletError}
+            className="wallet-auth-section"
+          />
+        )}
+
+        {/* Email/Password Form */}
+        {authMethod === 'email' && (
+          <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'signup' && (
             <div className="form-group">
               <label htmlFor="fullName">
@@ -69,6 +195,22 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 placeholder="Your full name"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && (
+            <div className="form-group">
+              <label htmlFor="pilotCertNumber">
+                <i className="fas fa-id-card"></i> Part 107 Pilot Certificate Number
+              </label>
+              <input
+                type="text"
+                id="pilotCertNumber"
+                value={pilotCertNumber}
+                onChange={(e) => setPilotCertNumber(e.target.value)}
+                required
+                placeholder="Your FAA Part 107 certificate number"
               />
             </div>
           )}
@@ -118,7 +260,10 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             {loading ? 'Processing...' : (mode === 'signin' ? 'Sign In' : 'Create Account')}
           </button>
         </form>
+        )}
 
+        {/* Show mode switch for email auth only */}
+        {authMethod === 'email' && (
         <div className="auth-switch">
           {mode === 'signin' ? (
             <p>
@@ -136,6 +281,15 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             </p>
           )}
         </div>
+        )}
+
+        {/* Show error for all auth methods */}
+        {error && (
+          <div className="error-message">
+            <i className="fas fa-exclamation-triangle"></i>
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );

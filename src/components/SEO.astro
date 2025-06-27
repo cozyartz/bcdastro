@@ -1,0 +1,218 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: string;
+  canonicalUrl?: string;
+  schemaOrg?: object;
+  noindex?: boolean;
+  locale?: string;
+}
+
+const { 
+  title, 
+  description, 
+  keywords = "", 
+  ogImage = "/og-image.jpg",
+  ogType = "website",
+  canonicalUrl,
+  schemaOrg,
+  noindex = false,
+  locale = "en_US"
+} = Astro.props;
+
+const currentUrl = canonicalUrl || Astro.url.href;
+const siteName = "Battle Creek Drone, LLC";
+const defaultKeywords = "drone mapping Battle Creek, aerial photography Michigan, commercial drone inspections, drone surveying, 3D mapping, FAA Part 107 training, women-owned drone company, Battle Creek drone services, agricultural drone mapping, construction site mapping, real estate drone photography";
+
+const finalKeywords = keywords ? `${keywords}, ${defaultKeywords}` : defaultKeywords;
+const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+
+// Default structured data for the business
+const defaultSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Battle Creek Drone, LLC",
+  "description": "Premier drone mapping and aerial services in Battle Creek, Michigan. Female-founded company specializing in high-precision mapping, commercial inspections, and creative multimedia solutions.",
+  "foundingDate": "2022",
+  "founders": [
+    {
+      "@type": "Person",
+      "name": "Co-Founder 1",
+      "gender": "Female"
+    },
+    {
+      "@type": "Person", 
+      "name": "Co-Founder 2",
+      "gender": "Female"
+    }
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Battle Creek",
+    "addressRegion": "Michigan",
+    "addressCountry": "US"
+  },
+  "serviceArea": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {
+      "@type": "GeoCoordinates",
+      "latitude": "42.3211",
+      "longitude": "-85.1797"
+    },
+    "geoRadius": "50000"
+  },
+  "services": [
+    "Drone Mapping & Surveying",
+    "Aerial Photography & Videography", 
+    "Commercial & Industrial Inspections",
+    "Specialized Drone Operations",
+    "Drone Training & Certification",
+    "Full-Stack Web Development",
+    "E-commerce Solutions",
+    "Custom Software Development"
+  ],
+  "priceRange": "$$",
+  "telephone": "+1-XXX-XXX-XXXX",
+  "email": "info@battlecreekdrone.com",
+  "url": "https://battlecreekdrone.com",
+  "logo": "https://battlecreekdrone.com/logo.png",
+  "image": "https://battlecreekdrone.com/og-image.jpg",
+  "sameAs": [
+    "https://www.linkedin.com/company/battle-creek-drone",
+    "https://www.instagram.com/battlecreekdrone",
+    "https://www.facebook.com/battlecreekdrone"
+  ],
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "name": "FAA Part 107 Remote Pilot Certificate"
+  },
+  "areaServed": [
+    "Battle Creek, MI",
+    "Kalamazoo, MI", 
+    "Grand Rapids, MI",
+    "Lansing, MI",
+    "Michigan"
+  ],
+  "keywords": finalKeywords
+};
+
+const schema = schemaOrg || defaultSchema;
+---
+
+<!-- Primary Meta Tags -->
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+<meta name="keywords" content={finalKeywords} />
+<meta name="author" content="Battle Creek Drone, LLC" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={currentUrl} />
+
+<!-- Robots -->
+{noindex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow" />}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={currentUrl} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content={locale} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={currentUrl} />
+<meta property="twitter:title" content={fullTitle} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={ogImage} />
+<meta property="twitter:creator" content="@battlecreekdrone" />
+
+<!-- Favicons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+<!-- Geo Meta Tags for Local SEO -->
+<meta name="geo.region" content="US-MI" />
+<meta name="geo.placename" content="Battle Creek, Michigan" />
+<meta name="geo.position" content="42.3211;-85.1797" />
+<meta name="ICBM" content="42.3211, -85.1797" />
+
+<!-- Business Meta Tags -->
+<meta name="business:contact_data:street_address" content="Battle Creek, MI" />
+<meta name="business:contact_data:locality" content="Battle Creek" />
+<meta name="business:contact_data:region" content="Michigan" />
+<meta name="business:contact_data:postal_code" content="49037" />
+<meta name="business:contact_data:country_name" content="United States" />
+
+<!-- Language alternates -->
+<link rel="alternate" hreflang="en" href={currentUrl} />
+<link rel="alternate" hreflang="x-default" href={currentUrl} />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
+<!-- DNS Prefetch -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com" />
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />
+
+<!-- Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+<!-- Additional local business schema for better local SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Battle Creek Drone, LLC",
+  "description": "Professional drone mapping, aerial photography, and full-stack development services in Battle Creek, Michigan",
+  "serviceType": ["Drone Mapping", "Aerial Photography", "Web Development", "Commercial Inspections"],
+  "provider": {
+    "@type": "LocalBusiness", 
+    "name": "Battle Creek Drone, LLC"
+  },
+  "areaServed": {
+    "@type": "State",
+    "name": "Michigan"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Drone and Development Services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Drone Mapping & Surveying",
+          "description": "High-precision 2D and 3D mapping for construction, agriculture, and environmental monitoring"
+        }
+      },
+      {
+        "@type": "Offer", 
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Aerial Photography & Videography",
+          "description": "Professional aerial content for real estate, events, and marketing"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service", 
+          "name": "Full-Stack Web Development",
+          "description": "Custom web applications, e-commerce solutions, and software development"
+        }
+      }
+    ]
+  }
+}
+</script>

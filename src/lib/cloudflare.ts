@@ -28,7 +28,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Downtown Battle Creek Aerial Tour',
     description: 'Comprehensive 4K aerial footage showcasing the heart of Battle Creek\'s business district during golden hour',
     type: 'video',
-    url: 'https://customer-streams.cloudflarestream.com/your-account/video-001/manifest/video.m3u8',
+    url: 'https://customer-51826042d6e31c694331efeb1be34123.cloudflarestream.com/video-001/manifest/video.m3u8',
     thumbnailUrl: 'https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=600',
     duration: '2:45',
     resolution: '4K UHD',
@@ -43,7 +43,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Agricultural Landscape Collection',
     description: 'High-resolution aerial photography capturing the geometric beauty of Michigan farmland and crop patterns',
     type: 'image',
-    url: 'https://imagedelivery.net/your-account/image-001/public',
+    url: 'https://imagedelivery.net/PocH-U7ndwJHixntYqkoZw/image-001/public',
     thumbnailUrl: 'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=600',
     resolution: '8K RAW',
     fileSize: '45 MB',
@@ -57,7 +57,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Sunset Over Kalamazoo River',
     description: 'Breathtaking cinematic footage of sunset reflections over the Kalamazoo River with dynamic camera movements',
     type: 'video',
-    url: 'https://customer-streams.cloudflarestream.com/your-account/video-002/manifest/video.m3u8',
+    url: 'https://customer-51826042d6e31c694331efeb1be34123.cloudflarestream.com/video-002/manifest/video.m3u8',
     thumbnailUrl: 'https://images.pexels.com/photos/1666021/pexels-photo-1666021.jpeg?auto=compress&cs=tinysrgb&w=600',
     duration: '3:20',
     resolution: '4K UHD',
@@ -72,7 +72,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Industrial Complex Overview',
     description: 'Detailed aerial documentation of manufacturing facilities and industrial infrastructure',
     type: 'image',
-    url: 'https://imagedelivery.net/your-account/image-002/public',
+    url: 'https://imagedelivery.net/PocH-U7ndwJHixntYqkoZw/image-002/public',
     thumbnailUrl: 'https://images.pexels.com/photos/1108101/pexels-photo-1108101.jpeg?auto=compress&cs=tinysrgb&w=600',
     resolution: '6K RAW',
     fileSize: '32 MB',
@@ -86,7 +86,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Real Estate Showcase - Luxury Property',
     description: 'Professional real estate videography featuring smooth cinematic movements and multiple angles',
     type: 'video',
-    url: 'https://customer-streams.cloudflarestream.com/your-account/video-003/manifest/video.m3u8',
+    url: 'https://customer-51826042d6e31c694331efeb1be34123.cloudflarestream.com/video-003/manifest/video.m3u8',
     thumbnailUrl: 'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=600',
     duration: '1:55',
     resolution: '4K UHD',
@@ -101,7 +101,7 @@ export const mockGalleryData: CloudflareMedia[] = [
     title: 'Construction Progress Documentation',
     description: 'Time-series aerial photography documenting construction phases and site development',
     type: 'image',
-    url: 'https://imagedelivery.net/your-account/image-003/public',
+    url: 'https://imagedelivery.net/PocH-U7ndwJHixntYqkoZw/image-003/public',
     thumbnailUrl: 'https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=600',
     resolution: '5K RAW',
     fileSize: '28 MB',
@@ -151,12 +151,16 @@ export class CloudflareMediaService {
   getImageUrl(imageId: string, variant: string = 'public'): string {
     return `${this.config.imagesBaseUrl}/${imageId}/${variant}`;
   }
+
+  getThumbnailUrl(videoId: string): string {
+    return `https://videodelivery.net/${videoId}/thumbnails/thumbnail.jpg`;
+  }
 }
 
 // Initialize service with your Cloudflare configuration
 export const cloudflareService = new CloudflareMediaService({
-  accountId: process.env.CLOUDFLARE_ACCOUNT_ID || 'your-account-id',
-  apiToken: process.env.CLOUDFLARE_API_TOKEN || 'your-api-token',
-  streamBaseUrl: 'https://customer-streams.cloudflarestream.com/your-account',
-  imagesBaseUrl: 'https://imagedelivery.net/your-account'
+  accountId: import.meta.env.CLOUDFLARE_ACCOUNT_ID || 'your-account-id',
+  apiToken: import.meta.env.CLOUDFLARE_API_TOKEN || 'your-api-token',
+  streamBaseUrl: `https://customer-${import.meta.env.CLOUDFLARE_STREAM_CUSTOMER_CODE || 'your-account'}.cloudflarestream.com`,
+  imagesBaseUrl: `https://imagedelivery.net/${import.meta.env.CLOUDFLARE_IMAGES_ACCOUNT_HASH || 'your-account'}`
 });

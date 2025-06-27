@@ -1,224 +1,88 @@
 ---
 import Layout from '../components/Layout.astro';
-import MediaCard from '../components/MediaCard.astro';
-import { cloudflareService } from '../lib/cloudflare';
+import MediaGallery from '../components/MediaGallery';
+import { MediaService } from '../lib/supabase';
+import { cloudflareMediaService } from '../lib/cloudflare-media-service';
 
-// Get gallery data from Cloudflare
-const galleryItems = await cloudflareService.getGalleryItems();
-const categories = await cloudflareService.getCategories();
+// Fetch approved media from Supabase
+const { data: mediaAssets, error } = await MediaService.getApprovedMedia();
 
-// Group items by category for stats
-const categoryStats = categories.map(category => ({
-  name: category,
-  count: galleryItems.filter(item => item.category === category).length
-}));
+// Transform to CloudflareMedia with proper URLs
+const cloudflareMedia = mediaAssets ? cloudflareMediaService.transformMediaAssets(mediaAssets) : [];
+const categories = cloudflareMediaService.getCategories(cloudflareMedia);
 ---
 
-<Layout title="Professional Aerial Media Gallery - Battle Creek Drone">
-  <div class="container">
-    <!-- Professional Hero Section -->
-    <section class="hero">
+<Layout title="Media Gallery" description="Browse our collection of professional drone footage and photography">
+  <main class="gallery-container">
+    <div class="hero-section">
       <div class="hero-content">
-        <div class="subtitle">Premium Aerial Content Library</div>
-        <h1>Professional Media Gallery</h1>
-        <p class="hero-description">
-          Discover our extensive collection of high-quality aerial photography and videography. 
-          Each piece is professionally captured, edited, and available for immediate licensing and download.
+        <h1 class="hero-title">Professional Drone Media Gallery</h1>
+        <p class="hero-subtitle">
+          Discover stunning aerial photography and videography captured by our professional drone pilots
         </p>
         <div class="hero-stats">
           <div class="stat-item">
-            <span class="stat-number">{galleryItems.length}</span>
-            <span class="stat-label">Media Assets</span>
+            <div class="stat-number">{cloudflareMedia.length}</div>
+            <div class="stat-label">Media Items</div>
           </div>
           <div class="stat-item">
-            <span class="stat-number">{categories.length}</span>
-            <span class="stat-label">Categories</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">4K+</span>
-            <span class="stat-label">Resolution</span>
+            <div class="stat-number">{categories.length}</div>
+            <div class="stat-label">Categories</div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Filter and Search Section -->
-    <section class="filter-section glass">
-      <div class="filter-header">
-        <h2>Browse Our Collection</h2>
-        <p>Filter by category or search for specific content</p>
-      </div>
-      
-      <div class="filter-controls">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input 
-            type="text" 
-            placeholder="Search media by title, description, or tags..."
-            id="media-search"
-          />
-        </div>
-        
-        <div class="category-filters">
-          <button class="filter-btn active" data-category="all">
-            <i class="fas fa-th"></i>
-            All ({galleryItems.length})
-          </button>
-          {categoryStats.map(category => (
-            <button class="filter-btn" data-category={category.name.toLowerCase()}>
-              <i class="fas fa-folder"></i>
-              {category.name} ({category.count})
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
+    <!-- React MediaGallery Component -->
+    <MediaGallery 
+      initialItems={cloudflareMedia} 
+      categories={categories}
+      client:load
+    />
 
-    <!-- Featured Content -->
-    <section class="content-section">
-      <div class="section-header">
-        <h2 class="section-title">Featured Content</h2>
-        <p class="section-subtitle">Our most popular and highest-quality aerial media</p>
+    {cloudflareMedia.length === 0 && (
+      <div class="no-media">
+        <i class="fas fa-camera"></i>
+        <h3>No media available</h3>
+        <p>Upload some media to get started!</p>
       </div>
-      
-      <div class="media-grid" id="media-grid">
-        {galleryItems.slice(0, 6).map(media => (
-          <MediaCard media={media} />
-        ))}
-      </div>
-      
-      <div class="load-more-section">
-        <button class="professional-button" id="load-more-btn">
-          <i class="fas fa-plus"></i>
-          Load More Content
-        </button>
-      </div>
-    </section>
-
-    <!-- Categories Overview -->
-    <section class="content-section glass">
-      <div class="section-header">
-        <h2 class="section-title">Content Categories</h2>
-        <p class="section-subtitle">Explore our organized collection by category</p>
-      </div>
-      
-      <div class="categories-grid">
-        {categoryStats.map(category => (
-          <div class="category-card" data-category={category.name.toLowerCase()}>
-            <div class="category-icon">
-              {category.name === 'Urban' && <i class="fas fa-city"></i>}
-              {category.name === 'Agricultural' && <i class="fas fa-seedling"></i>}
-              {category.name === 'Nature' && <i class="fas fa-tree"></i>}
-              {category.name === 'Industrial' && <i class="fas fa-industry"></i>}
-              {category.name === 'Real Estate' && <i class="fas fa-home"></i>}
-              {category.name === 'Construction' && <i class="fas fa-hard-hat"></i>}
-            </div>
-            <h3>{category.name}</h3>
-            <p>Professional {category.name.toLowerCase()} aerial content</p>
-            <div class="category-stats">
-              <span class="item-count">{category.count} items</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Licensing Information -->
-    <section class="content-section glass">
-      <div class="section-header">
-        <h2 class="section-title">Professional Licensing</h2>
-        <p class="section-subtitle">Flexible licensing options for commercial and personal use</p>
-      </div>
-      
-      <div class="licensing-grid">
-        <div class="license-card">
-          <div class="license-header">
-            <i class="fas fa-user"></i>
-            <h3>Standard License</h3>
-            <span class="license-price">Base Price</span>
-          </div>
-          <ul class="license-features">
-            <li><i class="fas fa-check"></i> Personal projects</li>
-            <li><i class="fas fa-check"></i> Social media use</li>
-            <li><i class="fas fa-check"></i> Educational purposes</li>
-            <li><i class="fas fa-times"></i> Commercial use</li>
-            <li><i class="fas fa-times"></i> Resale rights</li>
-          </ul>
-        </div>
-        
-        <div class="license-card featured">
-          <div class="license-header">
-            <i class="fas fa-briefcase"></i>
-            <h3>Commercial License</h3>
-            <span class="license-price">+75% Premium</span>
-          </div>
-          <ul class="license-features">
-            <li><i class="fas fa-check"></i> Commercial projects</li>
-            <li><i class="fas fa-check"></i> Marketing materials</li>
-            <li><i class="fas fa-check"></i> Website usage</li>
-            <li><i class="fas fa-check"></i> Print media</li>
-            <li><i class="fas fa-check"></i> Broadcast rights</li>
-          </ul>
-        </div>
-        
-        <div class="license-card">
-          <div class="license-header">
-            <i class="fas fa-crown"></i>
-            <h3>Extended License</h3>
-            <span class="license-price">+150% Premium</span>
-          </div>
-          <ul class="license-features">
-            <li><i class="fas fa-check"></i> Unlimited usage</li>
-            <li><i class="fas fa-check"></i> Exclusive rights</li>
-            <li><i class="fas fa-check"></i> Resale permitted</li>
-            <li><i class="fas fa-check"></i> Custom modifications</li>
-            <li><i class="fas fa-check"></i> Priority support</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Call to Action -->
-    <section class="hero">
-      <div class="hero-content">
-        <h2>Need Custom Content?</h2>
-        <p>
-          Can't find exactly what you're looking for? Our professional drone pilots can create 
-          custom aerial content tailored to your specific requirements.
-        </p>
-        <div class="cta-buttons">
-          <a href="/contact" class="professional-button">
-            <i class="fas fa-camera"></i>
-            Request Custom Work
-          </a>
-          <a href="/services" class="professional-button secondary">
-            <i class="fas fa-drone"></i>
-            View Our Services
-          </a>
-        </div>
-      </div>
-    </section>
-  </div>
+    )}
+  </main>
 </Layout>
 
 <style>
-  .hero-content {
-    max-width: 800px;
-    margin: 0 auto;
+  .gallery-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark-navy) 0%, #1e293b 100%);
   }
 
-  .hero-description {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    margin-bottom: 3rem;
-    color: rgba(255, 255, 255, 0.9);
+  .hero-section {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.9), rgba(6, 182, 212, 0.7)),
+                url('/hero-bg.jpg') center/cover;
+    padding: 6rem 2rem 4rem;
+    text-align: center;
+    color: white;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
   }
 
   .hero-stats {
     display: flex;
     justify-content: center;
     gap: 3rem;
-    margin-top: 2rem;
   }
 
   .stat-item {
@@ -226,244 +90,41 @@ const categoryStats = categories.map(category => ({
   }
 
   .stat-number {
-    display: block;
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: 800;
     color: var(--accent-cyan);
-    margin-bottom: 0.5rem;
+    display: block;
   }
 
   .stat-label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-  }
-
-  .filter-section {
-    padding: 2rem;
-    margin-bottom: 3rem;
-    border-radius: 16px;
-  }
-
-  .filter-header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .filter-header h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-    color: var(--white);
-  }
-
-  .filter-header p {
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .filter-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .search-box {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
     font-size: 1rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
   }
 
-  .category-filters {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 0.75rem 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    background: var(--accent-cyan);
-    color: var(--dark-navy);
-    border-color: var(--accent-cyan);
-    transform: translateY(-2px);
-  }
-
-  .section-header {
+  .no-media {
     text-align: center;
-    margin-bottom: 3rem;
-  }
-
-  .media-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  .load-more-section {
-    text-align: center;
-  }
-
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .category-card {
-    text-align: center;
-    padding: 2rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .category-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent-cyan);
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .category-icon {
-    font-size: 2.5rem;
-    color: var(--accent-cyan);
-    margin-bottom: 1rem;
-  }
-
-  .category-card h3 {
-    margin-bottom: 0.5rem;
-    color: var(--white);
-  }
-
-  .category-card p {
+    padding: 4rem 2rem;
     color: rgba(255, 255, 255, 0.7);
+  }
+
+  .no-media i {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1.5rem;
+  }
+
+  .no-media h3 {
+    color: white;
     margin-bottom: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .item-count {
-    background: var(--accent-cyan);
-    color: var(--dark-navy);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  .licensing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-
-  .license-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-  }
-
-  .license-card.featured {
-    border-color: var(--accent-cyan);
-    background: rgba(6, 182, 212, 0.1);
-    transform: scale(1.05);
-  }
-
-  .license-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-
-  .license-card.featured:hover {
-    transform: scale(1.05) translateY(-5px);
-  }
-
-  .license-header {
-    margin-bottom: 2rem;
-  }
-
-  .license-header i {
-    font-size: 2rem;
-    color: var(--accent-cyan);
-    margin-bottom: 1rem;
-  }
-
-  .license-header h3 {
-    margin-bottom: 0.5rem;
-    color: var(--white);
-  }
-
-  .license-price {
-    color: var(--accent-cyan);
-    font-weight: 600;
-  }
-
-  .license-features {
-    list-style: none;
-    text-align: left;
-  }
-
-  .license-features li {
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .license-features .fa-check {
-    color: var(--success-green);
-  }
-
-  .license-features .fa-times {
-    color: var(--medium-gray);
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 2rem;
+    font-size: 1.5rem;
   }
 
   @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+
     .hero-stats {
       gap: 2rem;
     }
@@ -471,90 +132,5 @@ const categoryStats = categories.map(category => ({
     .stat-number {
       font-size: 2rem;
     }
-
-    .filter-controls {
-      align-items: center;
-    }
-
-    .category-filters {
-      justify-content: center;
-    }
-
-    .media-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .licensing-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .license-card.featured {
-      transform: none;
-    }
-
-    .license-card.featured:hover {
-      transform: translateY(-5px);
-    }
   }
 </style>
-
-<script>
-  // Media filtering and search functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('media-search');
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const mediaGrid = document.getElementById('media-grid');
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    
-    let currentFilter = 'all';
-    let currentSearch = '';
-    let displayedItems = 6;
-    
-    // Filter functionality
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        filterButtons.forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentFilter = this.dataset.category;
-        filterMedia();
-      });
-    });
-    
-    // Search functionality
-    if (searchInput) {
-      searchInput.addEventListener('input', function() {
-        currentSearch = this.value.toLowerCase();
-        filterMedia();
-      });
-    }
-    
-    // Category card clicks
-    document.querySelectorAll('.category-card').forEach(card => {
-      card.addEventListener('click', function() {
-        const category = this.dataset.category;
-        const filterBtn = document.querySelector(`[data-category="${category}"]`);
-        if (filterBtn) {
-          filterBtn.click();
-          document.querySelector('.filter-section').scrollIntoView({ 
-            behavior: 'smooth' 
-          });
-        }
-      });
-    });
-    
-    function filterMedia() {
-      // In a real implementation, this would filter the actual media cards
-      // For now, we'll just show a loading state
-      console.log('Filtering media:', { currentFilter, currentSearch });
-    }
-    
-    // Load more functionality
-    if (loadMoreBtn) {
-      loadMoreBtn.addEventListener('click', function() {
-        displayedItems += 6;
-        // In a real implementation, this would load more items from Cloudflare
-        console.log('Loading more items, total:', displayedItems);
-      });
-    }
-  });
-</script>

@@ -1,0 +1,23 @@
+name = "bcdastro"
+compatibility_date = "2025-06-15"
+compatibility_flags = ["nodejs_compat"]
+main = "./index.js"
+assets = { directory = "./dist", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bcdastro-db"
+database_id = "de860f84-811d-4f7a-8ed9-f1c04bb43552"
+
+[[kv_namespaces]]
+binding = "KV_NAMESPACE"
+id = "0b2f870976b14e558f6467ca0cb440b0"
+
+[ai]
+binding = "AI"
+
+[vars]
+NETWORK_ID = "base-sepolia"
+SITE_URL = "http://localhost:4321" 
+STREAM_ACCOUNT_ID = "5182b4d6e3c6433efe0bd3122"
+USDC_CONTRACT_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"

@@ -1,0 +1,214 @@
+---
+// Demo page to test payment integration
+---
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Integration Demo - Battle Creek Drone</title>
+  <link rel="stylesheet" href="../styles/global.css" />
+</head>
+<body>
+  <div class="demo-container">
+    <header class="demo-header">
+      <h1>Payment Integration Demo</h1>
+      <p>Test the new Stripe + Coinbase crypto payment system</p>
+    </header>
+
+    <main class="demo-content">
+      <div class="demo-section">
+        <h2>Sample Media Asset</h2>
+        <div class="media-preview">
+          <div class="media-thumbnail">
+            <i class="fas fa-image"></i>
+          </div>
+          <div class="media-details">
+            <h3>Downtown Aerial Photography</h3>
+            <p>Professional drone footage of downtown area at sunset</p>
+            <div class="pricing">
+              <span class="price">$25.00</span>
+              <span class="license">Standard License</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-actions">
+        <button id="openPaymentModal" class="demo-button">
+          <i class="fas fa-shopping-cart"></i>
+          Purchase with Payment Options
+        </button>
+      </div>
+
+      <div class="demo-info">
+        <h3>Payment Methods Available:</h3>
+        <ul>
+          <li><i class="fas fa-credit-card"></i> Credit Card (Stripe)</li>
+          <li><i class="fab fa-bitcoin"></i> Cryptocurrency (Coinbase)</li>
+        </ul>
+        
+        <h3>Supported Cryptocurrencies:</h3>
+        <ul>
+          <li>Bitcoin (BTC)</li>
+          <li>Ethereum (ETH)</li>
+          <li>USD Coin (USDC)</li>
+          <li>Tether (USDT)</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <!-- Payment Modal will be injected here -->
+  <div id="payment-modal-root"></div>
+
+  <style>
+    .demo-container {
+      min-height: 100vh;
+      background: var(--gradient-primary);
+      padding: 2rem;
+      color: white;
+    }
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .demo-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #4fa8d8;
+    }
+
+    .demo-header p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .demo-content {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .demo-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .demo-section h2 {
+      color: #4fa8d8;
+      margin-bottom: 1.5rem;
+    }
+
+    .media-preview {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .media-thumbnail {
+      width: 120px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #4fa8d8;
+    }
+
+    .media-details h3 {
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .media-details p {
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1rem;
+    }
+
+    .pricing {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4fa8d8;
+    }
+
+    .license {
+      background: rgba(79, 168, 216, 0.2);
+      color: #4fa8d8;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    .demo-actions {
+      text-align: center;
+    }
+
+    .demo-button {
+      background: linear-gradient(135deg, #4fa8d8, #2d5aa0);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .demo-button:hover {
+      background: linear-gradient(135deg, #5bb8e8, #3d6ab0);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(79, 168, 216, 0.3);
+    }
+
+    .demo-info h3 {
+      color: #4fa8d8;
+      margin-bottom: 1rem;
+    }
+
+    .demo-info ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .demo-info li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .demo-info i {
+      color: #4fa8d8;
+      width: 20px;
+    }
+  </style>
+
+  <script>
+    // This would be replaced with the actual React component integration
+    document.getElementById('openPaymentModal').addEventListener('click', () => {
+      alert('Payment modal would open here with both Stripe and Crypto options.\n\nFeatures implemented:\n• Dual payment method selection\n• Crypto wallet integration\n• Real-time conversion rates\n• Payment status tracking\n• Database integration');
+    });
+  </script>
+</body>
+</html>

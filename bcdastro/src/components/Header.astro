@@ -1,0 +1,119 @@
+---
+import DarkToggle from './DarkToggle.tsx';
+import { motion } from 'framer-motion';
+
+const nav = [
+  { href: "#services", label: "Services", icon: "fas fa-concierge-bell" },
+  { href: "#portfolio", label: "Portfolio", icon: "fas fa-images" },
+  { href: "/media", label: "Gallery", icon: "fas fa-camera" },
+  { href: "/contact", label: "Contact", icon: "fas fa-envelope" },
+];
+
+const mobileVariants = {
+  open: { y: 0, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } },
+  closed: { y: "-100%", opacity: 0, transition: { duration: 0.3, ease: "easeIn" } },
+};
+---
+
+<header class="fixed top-0 inset-x-0 z-50 bg-gradient-to-r from-black/80 via-black/60 to-black/80 backdrop-blur border-b border-gray-800 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <a href="/" class="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-90 transition-all duration-300 flex items-center">
+      <i class="fas fa-drone-alt mr-2"></i> Battle Creek Drone
+    </a>
+    <div class="md:hidden flex items-center space-x-2">
+      <button 
+        id="search-toggle" 
+        aria-label="Toggle Search" 
+        class="text-white focus:outline-none p-2 rounded hover:bg-gray-700 transition"
+      >
+        <i class="fas fa-search"></i>
+      </button>
+      <button 
+        id="mobile-menu-toggle" 
+        aria-label="Toggle Menu" 
+        class="text-white focus:outline-none p-2 rounded hover:bg-gray-700 transition"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    <nav class="hidden md:flex space-x-6 text-sm font-medium items-center">
+      {nav.map(item => (
+        <a
+          href={item.href}
+          class="nav-link flex items-center text-gray-300 hover:text-cyan-400 transition-colors duration-300 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded px-2 py-1"
+          class:list={[{ 'text-cyan-400': Astro.url.pathname === item.href }]}
+        >
+          <i class={item.icon} class="mr-1"></i> {item.label}
+        </a>
+      ))}
+      <a href="/terms" class="flex items-center text-cyan-400 hover:underline ml-4">
+        <i class="fas fa-file-contract mr-1"></i> Terms
+      </a>
+      <DarkToggle client:only="react" />
+    </nav>
+  </div>
+
+  <motion.div
+    id="mobile-menu"
+    initial="closed"
+    animate={Astro.url.searchParams.get('menu') === 'open' ? 'open' : 'closed'}
+    variants={mobileVariants}
+    class="md:hidden flex-col px-4 pb-4 pt-2 space-y-2 bg-black/90 transform origin-top"
+  >
+    <form id="mobile-search" class="hidden mb-2" action="/api/search" method="GET">
+      <div class="relative">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search media..."
+          class="w-full bg-gray-800 text-white p-2 rounded-full pl-10 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+        />
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      </div>
+    </form>
+    {nav.map(item => (
+      <a
+        href={item.href}
+        class="nav-link flex items-center text-gray-300 hover:text-cyan-400 text-sm font-medium transition-colors duration-200 px-2 py-1"
+        class:list={[{ 'text-cyan-400': Astro.url.pathname === item.href }]}
+      >
+        <i class={item.icon} class="mr-1"></i> {item.label}
+      </a>
+    ))}
+    <a href="/terms" class="flex items-center text-gray-300 hover:text-cyan-400 text-sm font-medium transition-colors px-2 py-1">
+      <i class="fas fa-file-contract mr-1"></i> Terms
+    </a>
+  </motion.div>
+
+  <script is:inline>
+    const toggleBtn = document.getElementById("mobile-menu-toggle");
+    const searchToggleBtn = document.getElementById("search-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const mobileSearch = document.getElementById("mobile-search");
+
+    toggleBtn.addEventListener("click", () => {
+      const isOpen = mobileMenu.style.transform === "translateY(0px)";
+      mobileMenu.style.transform = isOpen ? "translateY(-100%)" : "translateY(0)";
+      mobileSearch?.classList.add('hidden'); // Hide search when menu toggles
+      const url = new URL(window.location);
+      url.searchParams.set('menu', isOpen ? 'closed' : 'open');
+      window.history.pushState({}, '', url);
+    });
+
+    searchToggleBtn.addEventListener("click", () => {
+      mobileSearch?.classList.toggle('hidden');
+      mobileMenu.style.transform = "translateY(-100%)"; // Close menu if open
+      const url = new URL(window.location);
+      url.searchParams.delete('menu');
+      window.history.pushState({}, '', url);
+    });
+
+    window.addEventListener('popstate', () => {
+      mobileMenu.style.transform = "translateY(-100%)";
+      mobileSearch?.classList.add('hidden');
+      const url = new URL(window.location);
+      url.searchParams.delete('menu');
+      window.history.pushState({}, '', url);
+    });
+  </script>
+</header>

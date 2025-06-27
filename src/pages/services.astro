@@ -1,176 +1,910 @@
 ---
 import Layout from '../components/Layout.astro';
-import ServiceCard from '../components/ServiceCard.astro';
+import SEO from '../components/SEO.astro';
 ---
 
-<Layout title="Services - Battle Creek Drone">
-  <div class="container">
-    <section class="hero">
-      <div class="subtitle">Professional Drone Services</div>
-      <h1>Our Services</h1>
-      <p>Comprehensive aerial solutions for agriculture, construction, inspections, and more. Licensed and insured pilots delivering precision results.</p>
-    </section>
+<Layout title="Professional Drone & Development Services">
+  <SEO 
+    title="Professional Drone Services & Full-Stack Development | Battle Creek Drone, LLC"
+    description="Comprehensive drone mapping, aerial photography, commercial inspections, and full-stack web development services in Michigan. Female-founded, FAA Part 107 certified with cutting-edge technology and proven expertise."
+    keywords="drone mapping services Michigan, aerial photography, commercial drone inspections, full-stack web development, e-commerce solutions, custom software development, female-owned tech company, FAA Part 107 certified, drone surveying Battle Creek, agricultural drone services, construction site mapping, real estate drone photography"
+  />
 
-    <!-- Main Services Grid -->
-    <section class="services">
-      <ServiceCard 
-        icon="fas fa-seedling"
-        title="Agricultural Solutions"
-        description="Optimize crop management, monitor soil health, and detect potential issues early with our aerial imaging and data analysis services."
-        features={[
-          "Crop health monitoring",
-          "Soil analysis mapping", 
-          "Irrigation planning",
-          "Yield optimization"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-ruler-combined"
-        title="Aerial Measurements"
-        description="Our advanced drone systems provide accurate and detailed measurements for construction, land surveying, and property development projects."
-        features={[
-          "Precision surveying",
-          "Volume calculations",
-          "Topographic mapping",
-          "Progress monitoring"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-cube"
-        title="3D Mapping & Modeling"
-        description="Revolutionary photogrammetry techniques that capture and process aerial imagery to create detailed, three-dimensional models of landscapes and structures."
-        features={[
-          "High-resolution 3D models",
-          "Point cloud generation",
-          "Digital twin creation",
-          "Virtual site tours"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-search"
-        title="Infrastructure Inspections"
-        description="Safer, more efficient, and cost-effective infrastructure assessments using high-resolution cameras and advanced sensors."
-        features={[
-          "Bridge inspections",
-          "Tower assessments",
-          "Roof evaluations",
-          "Safety compliance"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-shield-alt"
-        title="Emergency Response"
-        description="Rapid deployment for emergency situations, search and rescue operations, and disaster assessment with real-time data transmission."
-        features={[
-          "Search & rescue support",
-          "Disaster assessment",
-          "Real-time monitoring",
-          "Emergency mapping"
-        ]}
-      />
-      
-      <ServiceCard 
-        icon="fas fa-video"
-        title="Aerial Photography"
-        description="Professional aerial photography and videography services for real estate, events, marketing, and documentation purposes."
-        features={[
-          "4K video recording",
-          "High-resolution photography",
-          "Real estate marketing",
-          "Event documentation"
-        ]}
-      />
-    </section>
-
-    <!-- Additional Services Section -->
-    <section class="content-section glass">
-      <h2 class="section-title">Specialized Services</h2>
-      <p class="section-subtitle">Advanced solutions for specific industry needs</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-industry" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Industrial Inspections</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Comprehensive facility inspections, equipment monitoring, and safety assessments for industrial operations.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Flare stack inspections</li>
-            <li>Tank and vessel assessments</li>
-            <li>Conveyor system monitoring</li>
-            <li>Safety compliance documentation</li>
-          </ul>
-        </div>
-        
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-home" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Real Estate Services</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Stunning aerial photography and video to showcase properties and enhance marketing materials.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Property showcase videos</li>
-            <li>Neighborhood overviews</li>
-            <li>Land development documentation</li>
-            <li>Virtual property tours</li>
-          </ul>
-        </div>
-        
-        <div style="padding: 2rem; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);">
-          <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Data Analytics</h3>
-          <p style="opacity: 0.8; margin-bottom: 1rem;">Transform aerial data into actionable insights with advanced processing and analysis capabilities.</p>
-          <ul style="text-align: left; opacity: 0.8;">
-            <li>Thermal imaging analysis</li>
-            <li>Multispectral data processing</li>
-            <li>Change detection monitoring</li>
-            <li>Custom reporting solutions</li>
-          </ul>
+  <main>
+    <!-- Hero Section -->
+    <section class="services-hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Professional Drone Services &
+            <span class="gradient-text">Full-Stack Development</span>
+          </h1>
+          <p class="hero-description">
+            Battle Creek Drone, LLC offers comprehensive aerial solutions and custom development services. 
+            From precision drone mapping to cutting-edge web applications, we deliver technology solutions 
+            that elevate your business operations and drive growth.
+          </p>
+          <div class="hero-badges">
+            <div class="badge">
+              <i class="fas fa-certificate"></i>
+              <span>FAA Part 107 Certified</span>
+            </div>
+            <div class="badge">
+              <i class="fas fa-shield-alt"></i>
+              <span>Fully Licensed & Insured</span>
+            </div>
+            <div class="badge">
+              <i class="fas fa-female"></i>
+              <span>Female-Founded 2022</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Technology Section -->
-    <section class="content-section glass">
-      <h2 class="section-title">Our Technology</h2>
-      <p class="section-subtitle">State-of-the-art equipment for superior results</p>
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-camera" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">4K Cameras</h3>
-          <p style="opacity: 0.8;">Ultra-high resolution imaging for detailed documentation and analysis.</p>
+    <!-- Drone Services -->
+    <section class="service-category">
+      <div class="container">
+        <div class="category-header">
+          <div class="category-icon">
+            <i class="fas fa-drone"></i>
+          </div>
+          <h2 class="category-title">Professional Drone Services</h2>
+          <p class="category-description">
+            Advanced aerial solutions using state-of-the-art drone technology and precision sensors 
+            for mapping, inspections, and creative content creation.
+          </p>
         </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-thermometer-half" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Thermal Sensors</h3>
-          <p style="opacity: 0.8;">Advanced thermal imaging for infrastructure and agricultural monitoring.</p>
+
+        <div class="services-grid">
+          <!-- Drone Mapping & Surveying -->
+          <div class="service-card featured" id="mapping">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Drone Mapping & Surveying</h3>
+                <p class="service-tagline">Precision mapping with centimeter-level accuracy</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                High-precision 2D and 3D mapping solutions for construction, agriculture, land development, 
+                and environmental monitoring. Our advanced photogrammetry and LiDAR capabilities deliver 
+                professional-grade surveys faster and more cost-effectively than traditional methods.
+              </p>
+              
+              <div class="service-features">
+                <h4>What's Included:</h4>
+                <ul>
+                  <li><i class="fas fa-check"></i> Topographic surveys with RTK GPS precision</li>
+                  <li><i class="fas fa-check"></i> Orthomosaic maps and aerial imagery</li>
+                  <li><i class="fas fa-check"></i> Digital elevation models (DEM)</li>
+                  <li><i class="fas fa-check"></i> Volume calculations and stockpile analysis</li>
+                  <li><i class="fas fa-check"></i> Progress monitoring and change detection</li>
+                  <li><i class="fas fa-check"></i> GIS-ready data delivery formats</li>
+                </ul>
+              </div>
+              
+              <div class="service-applications">
+                <h4>Perfect For:</h4>
+                <div class="application-tags">
+                  <span>Construction Sites</span>
+                  <span>Land Development</span>
+                  <span>Mining Operations</span>
+                  <span>Agricultural Planning</span>
+                  <span>Environmental Monitoring</span>
+                </div>
+              </div>
+              
+              <div class="service-pricing">
+                <div class="price-range">Starting at $500/project</div>
+                <button class="btn-quote">Get Custom Quote</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aerial Photography & Videography -->
+          <div class="service-card" id="photography">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-camera"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Aerial Photography & Videography</h3>
+                <p class="service-tagline">Stunning 4K aerial content that captivates</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Professional aerial photography and videography services for real estate marketing, 
+                construction documentation, event coverage, and creative multimedia projects. 
+                Our cinema-grade cameras capture breathtaking perspectives that sell properties faster.
+              </p>
+              
+              <div class="service-features">
+                <h4>Capabilities:</h4>
+                <ul>
+                  <li><i class="fas fa-check"></i> 4K ultra-high definition video recording</li>
+                  <li><i class="fas fa-check"></i> High-resolution still photography (20MP+)</li>
+                  <li><i class="fas fa-check"></i> Virtual property tours and 360° panoramas</li>
+                  <li><i class="fas fa-check"></i> Construction progress time-lapse videos</li>
+                  <li><i class="fas fa-check"></i> Event coverage and special occasions</li>
+                  <li><i class="fas fa-check"></i> Professional editing and post-production</li>
+                </ul>
+              </div>
+              
+              <div class="service-applications">
+                <h4>Ideal For:</h4>
+                <div class="application-tags">
+                  <span>Real Estate Marketing</span>
+                  <span>Construction Progress</span>
+                  <span>Wedding Events</span>
+                  <span>Corporate Videos</span>
+                  <span>Tourism Promotion</span>
+                </div>
+              </div>
+              
+              <div class="service-pricing">
+                <div class="price-range">Starting at $300/session</div>
+                <button class="btn-quote">Book Session</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commercial & Industrial Inspections -->
+          <div class="service-card" id="inspections">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-search-plus"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Commercial & Industrial Inspections</h3>
+                <p class="service-tagline">Safe, efficient infrastructure assessments</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Comprehensive infrastructure inspections using thermal imaging, high-resolution cameras, 
+                and specialized sensors. Our drone inspections eliminate safety risks while providing 
+                detailed documentation and analysis for maintenance planning and compliance reporting.
+              </p>
+              
+              <div class="service-features">
+                <h4>Inspection Services:</h4>
+                <ul>
+                  <li><i class="fas fa-check"></i> Roof evaluations and damage assessment</li>
+                  <li><i class="fas fa-check"></i> Bridge and infrastructure inspections</li>
+                  <li><i class="fas fa-check"></i> Cell tower and communication equipment</li>
+                  <li><i class="fas fa-check"></i> Solar panel thermal analysis</li>
+                  <li><i class="fas fa-check"></i> Industrial facility monitoring</li>
+                  <li><i class="fas fa-check"></i> Detailed reports with recommendations</li>
+                </ul>
+              </div>
+              
+              <div class="service-applications">
+                <h4>Applications:</h4>
+                <div class="application-tags">
+                  <span>Building Inspections</span>
+                  <span>Infrastructure Assessment</span>
+                  <span>Industrial Monitoring</span>
+                  <span>Insurance Claims</span>
+                  <span>Safety Compliance</span>
+                </div>
+              </div>
+              
+              <div class="service-pricing">
+                <div class="price-range">Starting at $400/inspection</div>
+                <button class="btn-quote">Schedule Inspection</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full-Stack Development Preview -->
+          <div class="service-card" id="development">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-code"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Full-Stack Development</h3>
+                <p class="service-tagline">Custom web applications and software solutions</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Professional web development services including custom applications, e-commerce platforms, 
+                and data visualization tools. Perfect for complementing your drone operations with 
+                powerful software solutions that streamline workflows and enhance client experiences.
+              </p>
+              
+              <div class="service-features">
+                <h4>Development Services:</h4>
+                <ul>
+                  <li><i class="fas fa-check"></i> Custom web application development</li>
+                  <li><i class="fas fa-check"></i> E-commerce and payment solutions</li>
+                  <li><i class="fas fa-check"></i> Data visualization dashboards</li>
+                  <li><i class="fas fa-check"></i> API development and integrations</li>
+                  <li><i class="fas fa-check"></i> Mobile-responsive design</li>
+                  <li><i class="fas fa-check"></i> Cloud deployment and hosting</li>
+                </ul>
+              </div>
+              
+              <div class="service-applications">
+                <h4>Solutions:</h4>
+                <div class="application-tags">
+                  <span>Drone Data Platforms</span>
+                  <span>Client Portals</span>
+                  <span>E-commerce Sites</span>
+                  <span>Project Management</span>
+                  <span>Custom CRM</span>
+                </div>
+              </div>
+              
+              <div class="service-pricing">
+                <div class="price-range">Starting at $2,500</div>
+                <button class="btn-quote">Discuss Project</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-satellite" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">GPS Precision</h3>
-          <p style="opacity: 0.8;">Centimeter-level accuracy for surveying and mapping applications.</p>
+      </div>
+    </section>
+
+    <!-- Training & Certification -->
+    <section class="service-category training">
+      <div class="container">
+        <div class="category-header">
+          <div class="category-icon">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <h2 class="category-title">Training & Certification</h2>
+          <p class="category-description">
+            Professional drone pilot training, business consultation, and certification programs 
+            to help you succeed in the drone industry.
+          </p>
         </div>
-        <div style="text-align: center; padding: 1.5rem;">
-          <i class="fas fa-cloud-upload-alt" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
-          <h3 style="margin-bottom: 1rem;">Real-time Data</h3>
-          <p style="opacity: 0.8;">Live streaming and instant data transmission for immediate insights.</p>
+
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-certificate"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>FAA Part 107 Exam Prep</h3>
+                <p class="service-tagline">Complete certification training program</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Comprehensive preparation for the FAA Part 107 Remote Pilot Certificate exam, 
+                covering regulations, airspace, weather, and flight operations.
+              </p>
+              
+              <div class="service-pricing">
+                <div class="price-range">$399 per person</div>
+                <button class="btn-quote">Enroll Now</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-helicopter"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Hands-On Flight Training</h3>
+                <p class="service-tagline">Practical piloting skills development</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Real-world flight training with professional equipment, safety procedures, 
+                and advanced techniques for commercial drone operations.
+              </p>
+              
+              <div class="service-pricing">
+                <div class="price-range">$199 per session</div>
+                <button class="btn-quote">Book Training</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="service-card">
+            <div class="service-header">
+              <div class="service-icon">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <div class="service-title-group">
+                <h3>Business Consultation</h3>
+                <p class="service-tagline">Strategic guidance for drone businesses</p>
+              </div>
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">
+                Expert consultation on building and growing a successful drone service business, 
+                including market analysis, equipment selection, and workflow optimization.
+              </p>
+              
+              <div class="service-pricing">
+                <div class="price-range">$150 per hour</div>
+                <button class="btn-quote">Book Consultation</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Showcase -->
+    <section class="technology-showcase">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Our Technology & Equipment</h2>
+          <p class="section-subtitle">
+            Professional-grade equipment and cutting-edge software for superior results
+          </p>
+        </div>
+        
+        <div class="tech-grid">
+          <div class="tech-category">
+            <h3>Drone Fleet</h3>
+            <div class="tech-items">
+              <div class="tech-item">
+                <i class="fas fa-helicopter"></i>
+                <span>Professional mapping drones with RTK GPS</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-video"></i>
+                <span>4K/6K cinema-grade cameras</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-thermometer-half"></i>
+                <span>Thermal imaging sensors</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tech-category">
+            <h3>Software & Analysis</h3>
+            <div class="tech-items">
+              <div class="tech-item">
+                <i class="fas fa-cube"></i>
+                <span>Photogrammetry and 3D modeling</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Data analytics and visualization</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-cloud"></i>
+                <span>Cloud processing and storage</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tech-category">
+            <h3>Development Tools</h3>
+            <div class="tech-items">
+              <div class="tech-item">
+                <i class="fab fa-react"></i>
+                <span>Modern frontend frameworks</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-server"></i>
+                <span>Scalable backend solutions</span>
+              </div>
+              <div class="tech-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Enterprise security and compliance</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Call to Action -->
-    <section class="hero">
-      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Get Started?</h2>
-      <p>Contact us today to discuss your project requirements and receive a customized quote.</p>
-      <div class="flex gap-4 justify-center flex-wrap mt-4">
-        <a href="/contact" class="professional-button">
-          <i class="fas fa-envelope"></i> Request Quote
-        </a>
-        <a href="tel:269.425.1770" class="professional-button secondary">
-          <i class="fas fa-phone"></i> Call Now
-        </a>
+    <section class="services-cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2>Ready to Transform Your Operations?</h2>
+          <p>
+            Contact Battle Creek Drone, LLC today for a free consultation and discover how our 
+            comprehensive services can elevate your business and drive growth.
+          </p>
+          
+          <div class="cta-actions">
+            <a href="/contact" class="btn-primary">
+              <i class="fas fa-envelope"></i>
+              Request Free Quote
+            </a>
+            <a href="tel:+1-269-XXX-XXXX" class="btn-secondary">
+              <i class="fas fa-phone"></i>
+              Call (269) XXX-XXXX
+            </a>
+          </div>
+        </div>
       </div>
     </section>
-  </div>
+  </main>
 </Layout>
+
+<style>
+  /* Services Hero */
+  .services-hero {
+    padding: 8rem 0 4rem;
+    background: linear-gradient(135deg, var(--dark-navy) 0%, #1e293b 50%, #0f172a 100%);
+    text-align: center;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: white;
+    margin-bottom: 1.5rem;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 3rem;
+  }
+
+  .hero-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 50px;
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Service Categories */
+  .service-category {
+    padding: 6rem 0;
+  }
+
+  .service-category:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .training {
+    background: linear-gradient(180deg, var(--dark-navy) 0%, #1e293b 100%);
+  }
+
+  .category-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .category-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+  }
+
+  .category-icon i {
+    font-size: 2.5rem;
+    color: white;
+  }
+
+  .category-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  .category-description {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Services Grid */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .service-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+
+  .service-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .service-card.featured {
+    border: 2px solid var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.05);
+  }
+
+  .service-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .service-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .service-icon i {
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .service-title-group h3 {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .service-tagline {
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .service-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .service-description {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+
+  .service-features h4,
+  .service-applications h4 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+
+  .service-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .service-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .service-features li i {
+    color: var(--accent-cyan);
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  .application-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .application-tags span {
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    color: var(--accent-cyan);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .service-pricing {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .price-range {
+    color: var(--accent-cyan);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  .btn-quote {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .btn-quote:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  }
+
+  /* Technology Showcase */
+  .technology-showcase {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, #1e293b 0%, var(--dark-navy) 100%);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .tech-category {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .tech-category h3 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .tech-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .tech-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+  }
+
+  .tech-item i {
+    color: var(--accent-cyan);
+    width: 20px;
+    text-align: center;
+  }
+
+  .tech-item span {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Services CTA */
+  .services-cta {
+    padding: 6rem 0;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+    text-align: center;
+  }
+
+  .cta-content h2 {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-content > p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: white;
+    color: var(--primary-blue);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .services-hero {
+      padding: 6rem 0 3rem;
+    }
+
+    .hero-badges {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .service-category {
+      padding: 4rem 0;
+    }
+
+    .services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .service-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .service-pricing {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .tech-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 1rem;
+    }
+
+    .service-card {
+      padding: 2rem;
+    }
+
+    .hero-title,
+    .category-title,
+    .section-title {
+      font-size: 2rem;
+    }
+  }
+</style>
