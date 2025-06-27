@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import MediaCard from './MediaCard';
-import { cloudflareService } from '../lib/cloudflare';
+import { cloudflareMediaService } from '../lib/cloudflare-media-service';
 import { AuthService } from '../lib/supabase';
-import type { CloudflareMedia } from '../lib/cloudflare';
+import type { CloudflareMedia } from '../lib/cloudflare-media-service';
 
 interface MediaGalleryProps {
   initialItems: CloudflareMedia[];
@@ -17,6 +17,7 @@ export default function MediaGallery({ initialItems, categories }: MediaGalleryP
   const [displayedItems, setDisplayedItems] = useState(6);
   const [isLoading, setIsLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Category stats
   const categoryStats = categories.map(category => ({
@@ -31,6 +32,33 @@ export default function MediaGallery({ initialItems, categories }: MediaGalleryP
     };
     checkUser();
   }, []);
+
+  // Intersection Observer for lazy loading (cost optimization)
+  useEffect(() => {
+    const observerOptions = {
+      rootMargin: '50px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            observer.unobserve(img);
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe all lazy-loaded images
+    const lazyImages = document.querySelectorAll('img[data-src]');
+    lazyImages.forEach(img => observer.observe(img));
+
+    return () => observer.disconnect();
+  }, [itemsToShow]);
 
   useEffect(() => {
     filterAndSearch();
@@ -75,8 +103,14 @@ export default function MediaGallery({ initialItems, categories }: MediaGalleryP
     setSearchQuery(e.target.value);
   };
 
-  const loadMoreItems = () => {
+  const loadMoreItems = async () => {
+    setIsLoadingMore(true);
+    
+    // Simulate loading delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     setDisplayedItems(prev => prev + 6);
+    setIsLoadingMore(false);
   };
 
   const handleCategoryCardClick = (category: string) => {
@@ -180,10 +214,10 @@ export default function MediaGallery({ initialItems, categories }: MediaGalleryP
                 <button 
                   className="professional-button" 
                   onClick={loadMoreItems}
-                  disabled={isLoading}
+                  disabled={isLoadingMore}
                 >
-                  <i className="fas fa-plus"></i>
-                  {isLoading ? 'Loading...' : 'Load More Content'}
+                  <i className={`fas ${isLoadingMore ? 'fa-spinner fa-spin' : 'fa-plus'}`}></i>
+                  {isLoadingMore ? 'Loading...' : 'Load More Content'}
                 </button>
               </div>
             )}

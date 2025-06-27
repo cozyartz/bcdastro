@@ -1,10 +1,15 @@
 ---
 import Layout from '../components/Layout.astro';
+import MediaGallery from '../components/MediaGallery';
 import { MediaService } from '../lib/supabase';
+import { cloudflareMediaService } from '../lib/cloudflare-media-service';
 
-// Fetch approved media
+// Fetch approved media from Supabase
 const { data: mediaAssets, error } = await MediaService.getApprovedMedia();
-const media = mediaAssets || [];
+
+// Transform to CloudflareMedia with proper URLs
+const cloudflareMedia = mediaAssets ? cloudflareMediaService.transformMediaAssets(mediaAssets) : [];
+const categories = cloudflareMediaService.getCategories(cloudflareMedia);
 ---
 
 <Layout title="Media Gallery" description="Browse our collection of professional drone footage and photography">
@@ -17,71 +22,31 @@ const media = mediaAssets || [];
         </p>
         <div class="hero-stats">
           <div class="stat-item">
-            <div class="stat-number">{media.length}</div>
+            <div class="stat-number">{cloudflareMedia.length}</div>
             <div class="stat-label">Media Items</div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="gallery-main">
-      <div class="filter-controls">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search media..." id="searchInput">
-        </div>
-        <div class="category-filters">
-          <button class="filter-btn active" data-category="all">All</button>
-          <button class="filter-btn" data-category="urban">Urban</button>
-          <button class="filter-btn" data-category="nature">Nature</button>
-          <button class="filter-btn" data-category="real-estate">Real Estate</button>
-          <button class="filter-btn" data-category="industrial">Industrial</button>
-        </div>
-      </div>
-
-      <div class="media-grid" id="mediaGrid">
-        {media.map((item) => (
-          <div class="media-card" data-category={item.category?.toLowerCase()}>
-            <div class="media-thumbnail">
-              {item.type === 'video' ? (
-                <div class="video-thumbnail">
-                  <img src={item.thumbnail_url} alt={item.title} />
-                  <div class="play-overlay">
-                    <i class="fas fa-play"></i>
-                  </div>
-                  <div class="duration-badge">{item.duration}</div>
-                </div>
-              ) : (
-                <img src={item.thumbnail_url} alt={item.title} />
-              )}
-            </div>
-            <div class="media-info">
-              <h3 class="media-title">{item.title}</h3>
-              <p class="media-description">{item.description}</p>
-              <div class="media-meta">
-                <span class="media-type">
-                  <i class={`fas fa-${item.type === 'video' ? 'video' : 'image'}`}></i>
-                  {item.type}
-                </span>
-                <span class="media-resolution">{item.resolution}</span>
-              </div>
-              <div class="media-pricing">
-                <span class="price">${item.individual_price}</span>
-                <button class="btn-primary">Purchase License</button>
-              </div>
-            </div>
+          <div class="stat-item">
+            <div class="stat-number">{categories.length}</div>
+            <div class="stat-label">Categories</div>
           </div>
-        ))}
-      </div>
-
-      {media.length === 0 && (
-        <div class="no-media">
-          <i class="fas fa-camera"></i>
-          <h3>No media available</h3>
-          <p>Check back soon for new content!</p>
         </div>
-      )}
+      </div>
     </div>
+
+    <!-- React MediaGallery Component -->
+    <MediaGallery 
+      initialItems={cloudflareMedia} 
+      categories={categories}
+      client:load
+    />
+
+    {cloudflareMedia.length === 0 && (
+      <div class="no-media">
+        <i class="fas fa-camera"></i>
+        <h3>No media available</h3>
+        <p>Upload some media to get started!</p>
+      </div>
+    )}
   </main>
 </Layout>
 
@@ -137,212 +102,6 @@ const media = mediaAssets || [];
     margin-top: 0.5rem;
   }
 
-  .gallery-main {
-    padding: 4rem 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .filter-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3rem;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-
-  .search-box {
-    position: relative;
-    flex: 1;
-    max-width: 400px;
-  }
-
-  .search-box i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50px;
-    color: white;
-    font-size: 1rem;
-  }
-
-  .search-box input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .category-filters {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 25px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: capitalize;
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    background: var(--accent-cyan);
-    border-color: var(--accent-cyan);
-    transform: translateY(-2px);
-  }
-
-  .media-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 2rem;
-  }
-
-  .media-card {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .media-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-  }
-
-  .media-thumbnail {
-    position: relative;
-    height: 220px;
-    overflow: hidden;
-  }
-
-  .media-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .media-card:hover .media-thumbnail img {
-    transform: scale(1.05);
-  }
-
-  .video-thumbnail {
-    position: relative;
-    height: 100%;
-  }
-
-  .play-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .media-card:hover .play-overlay {
-    background: var(--accent-cyan);
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-
-  .duration-badge {
-    position: absolute;
-    bottom: 0.5rem;
-    right: 0.5rem;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-  }
-
-  .media-info {
-    padding: 1.5rem;
-  }
-
-  .media-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: white;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-  }
-
-  .media-description {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .media-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .media-type i {
-    margin-right: 0.5rem;
-  }
-
-  .media-pricing {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--accent-cyan);
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-  }
-
   .no-media {
     text-align: center;
     padding: 4rem 2rem;
@@ -366,19 +125,6 @@ const media = mediaAssets || [];
       font-size: 2.5rem;
     }
 
-    .filter-controls {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .category-filters {
-      justify-content: center;
-    }
-
-    .media-grid {
-      grid-template-columns: 1fr;
-    }
-
     .hero-stats {
       gap: 2rem;
     }
@@ -388,47 +134,3 @@ const media = mediaAssets || [];
     }
   }
 </style>
-
-<script>
-  // Search functionality
-  const searchInput = document.getElementById('searchInput');
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const mediaCards = document.querySelectorAll('.media-card');
-
-  let currentCategory = 'all';
-  let currentSearch = '';
-
-  function filterMedia() {
-    mediaCards.forEach(card => {
-      const title = card.querySelector('.media-title')?.textContent?.toLowerCase() || '';
-      const description = card.querySelector('.media-description')?.textContent?.toLowerCase() || '';
-      const category = card.dataset.category || '';
-
-      const matchesSearch = currentSearch === '' || 
-        title.includes(currentSearch) || 
-        description.includes(currentSearch);
-      
-      const matchesCategory = currentCategory === 'all' || category === currentCategory;
-
-      if (matchesSearch && matchesCategory) {
-        card.style.display = 'block';
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  }
-
-  searchInput?.addEventListener('input', (e) => {
-    currentSearch = e.target.value.toLowerCase();
-    filterMedia();
-  });
-
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCategory = btn.dataset.category;
-      filterMedia();
-    });
-  });
-</script>

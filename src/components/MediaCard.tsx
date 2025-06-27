@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import VideoModal from './VideoModal';
 import PaymentModal from './PaymentModal';
-import type { CloudflareMedia } from '../lib/cloudflare';
+import type { CloudflareMedia } from '../lib/cloudflare-media-service';
 
 interface MediaCardProps {
   media: CloudflareMedia;
@@ -61,6 +61,10 @@ export default function MediaCard({ media, isPurchased = false, userEmail }: Med
             alt={media.title}
             className="media-thumbnail"
             loading="lazy"
+            onError={(e) => {
+              // Fallback for missing thumbnails
+              e.currentTarget.src = '/placeholder-thumbnail.jpg';
+            }}
           />
           <div className="media-overlay">
             {media.type === 'video' ? (
@@ -166,7 +170,7 @@ export default function MediaCard({ media, isPurchased = false, userEmail }: Med
             id: media.id,
             title: media.title,
             description: media.description,
-            url: media.url,
+            url: media.streamUrl || media.url, // Use HLS URL for video playback
             thumbnailUrl: media.thumbnailUrl,
             duration: media.duration,
             resolution: media.resolution,
